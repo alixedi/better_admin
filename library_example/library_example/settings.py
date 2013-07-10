@@ -1,5 +1,8 @@
 # Django settings for library_example project.
 
+from os.path import abspath, dirname, join
+PROJECT_ROOT = abspath(dirname(__file__))
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -111,6 +114,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    join(PROJECT_ROOT, 'templates')
 )
 
 INSTALLED_APPS = (
@@ -191,6 +195,9 @@ AUTHENTICATION_BACKENDS = (
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'accounts.MyProfile'
 USERENA_ACTIVATION_REQUIRED = False
+LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
 
 # settings for django debug toolbar
 INTERNAL_IPS = ('127.0.0.1',)

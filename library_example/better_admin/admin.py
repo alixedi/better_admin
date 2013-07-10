@@ -27,7 +27,7 @@ class BetterModelAdmin(object):
         of the CRUD views, if not, generate sane defaults.
         '''
         # Have to define a querysey
-        if not self.queryset:
+        if self.queryset is None:
             raise ImproperlyConfigured(
                 '''BetterModelAdmin requires a definition of \
                 queryset property in order to work.''')
@@ -36,7 +36,7 @@ class BetterModelAdmin(object):
         self.list_view = getattr(self, 'list_view', self.get_list_view())
         self.detail_view = getattr(self, 'detail_view', self.get_detail_view())
         self.create_view = getattr(self, 'create_view', self.get_create_view())
-        self.update_view = getattr(self, 'update_view', self.get_upadate_view())
+        self.update_view = getattr(self, 'update_view', self.get_update_view())
         self.delete_view = getattr(self, 'delete_view', self.get_delete_view())
 
     def get_model_name(self, lower=False, plural=False):
@@ -44,9 +44,9 @@ class BetterModelAdmin(object):
         Returns the model of that self.queryset belongs to, with support for
         lowercase as well as plural.
         '''
-        ret = self.model._meta.object_name
+        ret = self.queryset.model._meta.object_name
         if plural:
-            ret = self.model._meta.verbose_name_plural
+            ret = self.queryset.model._meta.verbose_name_plural
         if lower:
             return ret.lower()
         return ret
@@ -57,8 +57,8 @@ class BetterModelAdmin(object):
         support for lowercase.
         '''
         if lower:
-            return self.model._meta.app_label.lower()
-        return self.model._meta.app_label
+            return self.queryset.model._meta.app_label.lower()
+        return self.queryset.model._meta.app_label
 
     def get_template(self, viewtype):
         '''
@@ -84,8 +84,6 @@ class BetterModelAdmin(object):
         '''
         Factory method for BetterListView that returns a sane default.
         '''
-        self.check_model_permission('view')
-
         class ListView(BetterListView):
             queryset = self.queryset
             permission_required = self.get_permission('view', app=True)
@@ -96,8 +94,6 @@ class BetterModelAdmin(object):
         '''
         Factory method for BetterDetailView that returns a sane default.
         '''
-        self.check_permission('view')
-
         class DetailView(BetterDetailView):
             model = self.queryset.model
             permission_required = self.get_permission('view', app=True)
@@ -108,8 +104,6 @@ class BetterModelAdmin(object):
         '''
         Factory method for BetterCreateView that returns a sane default.
         '''
-        self.check_permission('add')
-
         class CreateView(BetterCreateView):
             model = self.queryset.model
             permission_required = self.get_permission('add', app=True)
@@ -120,8 +114,6 @@ class BetterModelAdmin(object):
         '''
         Factory method for BetterUpdateView that returns a sane default.
         '''
-        self.check_permission('modify')
-
         class UpdateView(BetterUpdateView):
             model = self.queryset.model
             permission_required = self.get_permission('modify', app=True)
@@ -132,8 +124,6 @@ class BetterModelAdmin(object):
         '''
         Factory method for BetterDeleteView that returns a sane default.
         '''
-        self.check_permission('delete')
-
         class DeleteView(BetterDeleteView):
             model = self.queryset.model
             permission_required = self.get_permission('delete', app=True)
@@ -161,7 +151,7 @@ class BetterModelAdmin(object):
 
     def get_urls(self):
         '''
-        Masterpiece plugs into the urls.py and generate default patterns in 
+        Masterpiece plugs into the urls.py and generate default patterns in
         order to keep things DRY. Following are the conventions in force:
         list_view: /app_name/model_name_plural/
         create_view: /app_name/model_name_plural/create
@@ -176,23 +166,23 @@ class BetterModelAdmin(object):
 
             url(r'^%s/create$' % self.get_base_url(),
                 self.create_view.as_view(),
-                self.get_view_name('create')),
+                name=self.get_view_name('create')),
 
             url(r'^%s/(?P<pk>\d+)$' % self.get_base_url(),
                 self.detail_view.as_view(),
-                self.get_view_name('detail')),
+                name=self.get_view_name('detail')),
 
             url(r'^%s/(?P<pk>\d+)/update$' % self.get_base_url(),
                 self.update_view.as_view(),
-                self.get_view_name('update')),
+                name=self.get_view_name('update')),
 
             url(r'^%s/(?P<pk>\d+)/delete$' % self.get_base_url(),
                 self.delete_view.as_view(),
-                self.get_view_name('delete')),
+                name=self.get_view_name('delete')),
 
             url(r'^%s/' % self.get_base_url(),
                 self.list_view.as_view(),
-                self.get_view_name('list')),
+                name=self.get_view_name('list')),
         )
 
 
@@ -211,11 +201,11 @@ class BetterAppAdmin(object):
 
     def __init__(self):
         '''
-        Check for correct definition of app_name. Generate CRUD views for 
+        Check for correct definition of app_name. Generate CRUD views for
         all the models in the app.
         '''
         # Have to define an app
-        if not self.app_name:
+        if self.app_name is None:
             raise ImproperlyConfigured(
                 '''BetterAppAdmin requires a definition of \
                 app_name property in order to work.''')
@@ -228,15 +218,18 @@ class BetterAppAdmin(object):
         '''
         Returns a default BetterModelAdmin given a model.
         '''
-        return type('%sAdmin' % self.model._meta.object_name,
+        klass = type('%sAdmin' % model._meta.object_name,
                     (BetterModelAdmin,),
-                    dict(queryset=model.objects.all()))
+                     dict(queryset=model.objects.all()))
+        return klass()
 
     def get_urls(self):
         '''
         Gets url patterns from respective admins, merges and returns them.
         '''
-        urlpatterns = patterns()
+        urlpatterns = patterns('',)
         for admin in self.admins.values():
+            print admin.get_urls()
             urlpatterns += admin.get_urls()
+        print urlpatterns
         return urlpatterns

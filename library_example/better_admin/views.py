@@ -1,5 +1,5 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from better_admin.mixins import BetterListFilteredMixin, BetterSingleTableMixin
+from better_admin.viewmixins import BetterListFilteredMixin, BetterSingleTableMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 
 
