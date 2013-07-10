@@ -5,6 +5,4 @@ from django.conf.urls import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^library/', include('library.urls')),
-    (r'^accounts/', include('userena.urls')),
 )

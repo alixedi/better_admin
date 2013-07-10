@@ -9,6 +9,6 @@ django-guardian==1.1.1
 django-userena==1.2.1
 django-filter==0.6
 django-braces==1.0.0
-django-enhanced-cbv==0.1.dev
 django-extra-views==0.6.3
 django-tables2==0.13.0
+-e git://github.com/piran/userena-bootstrap.git#egg=userenabootstrap

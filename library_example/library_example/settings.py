@@ -120,8 +120,33 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # not strictly a dep
+    'debug_toolbar',
+
+    # better_admin deps
+    # for user mgmt
+    'userena',
+    # dep of userena
+    'guardian',
+    # dep of userena
+    'easy_thumbnails',
+    # filtering support
+    'django_filters',
+    # awesome cbvs
+    'braces',
+    'extra_views',
+    # painless html tables
+    'django_tables2',
+
+    # us
     'better_admin',
-    'library_example',
+
+    # for user mgmgt
+    'accounts',
+    # test app
+    'library',
+
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -156,3 +181,27 @@ LOGGING = {
         },
     }
 }
+
+# userena settings
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'accounts.MyProfile'
+USERENA_ACTIVATION_REQUIRED = False
+
+# settings for django debug toolbar
+INTERNAL_IPS = ('127.0.0.1',)
+
+# settings for django tables 2
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
+)
