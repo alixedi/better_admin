@@ -229,7 +229,5 @@ class BetterAppAdmin(object):
         '''
         urlpatterns = patterns('',)
         for admin in self.admins.values():
-            print admin.get_urls()
             urlpatterns += admin.get_urls()
-        print urlpatterns
         return urlpatterns
