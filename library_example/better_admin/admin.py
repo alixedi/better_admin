@@ -3,6 +3,7 @@ from better_admin.views import BetterListView, BetterDetailView, \
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.db.models import get_app, get_models
+from django.core.urlresolvers import reverse_lazy
 
 
 class BetterModelAdmin(object):
@@ -108,6 +109,7 @@ class BetterModelAdmin(object):
             model = self.queryset.model
             permission_required = self.get_permission('add', app=True)
             template_name = self.get_template('create')
+            success_url = reverse_lazy(self.get_view_name('list'))
         return CreateView
 
     def get_update_view(self):
@@ -118,6 +120,7 @@ class BetterModelAdmin(object):
             model = self.queryset.model
             permission_required = self.get_permission('modify', app=True)
             template_name = self.get_template('update')
+            success_url = reverse_lazy(self.get_view_name('detail'))
         return UpdateView
 
     def get_delete_view(self):
@@ -128,6 +131,7 @@ class BetterModelAdmin(object):
             model = self.queryset.model
             permission_required = self.get_permission('delete', app=True)
             template_name = self.get_template('delete')
+            success_url = reverse_lazy(self.get_view_name('list'))
         return DeleteView
 
     def get_base_url(self):
