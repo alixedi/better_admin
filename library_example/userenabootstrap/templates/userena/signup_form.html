@@ -1,0 +1,17 @@
+{% extends 'userena/base_userena.html' %}
+{% load i18n bootstrap %}
+
+{% block title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<form action="" method="post" class="form-horizontal well">
+  {% csrf_token %}
+  <fieldset>
+    <legend>{% trans "Signup" %}</legend>
+    {{ form|bootstrap }}
+  </fieldset>
+  <div class="form-actions">
+    <input type="submit" value="{% trans "Sign Up"%}" class="btn btn-primary" />
+  </div>
+</form>
+{% endblock %}

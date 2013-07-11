@@ -130,6 +130,10 @@ INSTALLED_APPS = (
     'debug_toolbar',
 
     # better_admin deps
+    # reqd for userena bootstrap
+    'bootstrapform',
+    # bootstrap templaets for userena
+    'userenabootstrap',
     # for user mgmt
     'userena',
     # dep of userena
