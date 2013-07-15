@@ -126,12 +126,17 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # us
+    'better_admin',
+
     # not strictly a dep
     'debug_toolbar',
 
     # better_admin deps
     # reqd for userena bootstrap
     'bootstrapform',
+    # replacement for bootstrapform
+    'bootstrap_toolkit',
     # bootstrap templaets for userena
     'userenabootstrap',
     # for user mgmt
@@ -145,11 +150,10 @@ INSTALLED_APPS = (
     # awesome cbvs
     'braces',
     'extra_views',
+    # bootstrap for dt2
+    'dt2bootstrap',
     # painless html tables
     'django_tables2',
-
-    # us
-    'better_admin',
 
     # for user mgmgt
     'accounts',

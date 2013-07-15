@@ -1,9 +1,16 @@
 {% extends 'better_admin/base_better_admin.html' %}
+{% load bootstrap %}
 
 {% block content %}
-<form method="POST" action="{{ request.get_full_path }}">
-		{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
-</form>
+    <form class="form-horizontal well" method="POST" action="{{ request.get_full_path }}">
+    	{% csrf_token %}
+        <fieldset>
+            <legend>Create {{ view.get_model_name }}</legend>
+            {{ form|bootstrap }}
+        </fieldset>
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Submit" />
+            <button class="btn">Cancel</button>
+        </div>
+    </form>
 {% endblock %}

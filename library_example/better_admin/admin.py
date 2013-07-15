@@ -48,15 +48,15 @@ class BetterModelAdmin(object):
                 queryset property in order to work.''')
 
         # If user hasn't specified his own views, provide good defaults
-        if not self.list_view is None:
+        if self.list_view is None:
             self.list_view = self.get_list_view()
-        if not self.detail_view is None:
+        if self.detail_view is None:
             self.detail_view = self.get_detail_view()
-        if not self.create_view is None:
+        if self.create_view is None:
             self.create_view = self.get_create_view()
-        if not self.update_view is None:
+        if self.update_view is None:
             self.update_view = self.get_update_view()
-        if not self.delete_view is None:
+        if self.delete_view is None:
             self.delete_view = self.get_delete_view()
 
     def get_model_name(self, lower=False, plural=False):

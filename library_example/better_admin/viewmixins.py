@@ -95,3 +95,21 @@ class BetterSingleTableMixin(SingleTableMixin):
                          (Table,),
                          dict(model=model))
             return klass
+
+
+class BetterMetaMixin(object):
+    '''
+    Functions for accessing Meta-data in views.
+    '''
+    def get_model_name(self, lower=False, plural=False):
+        '''
+        Returns the model of that self.queryset belongs to, with support for
+        lowercase as well as plural.
+        '''
+        model = self.get_queryset().model
+        ret = model._meta.object_name
+        if plural:
+            ret = model._meta.verbose_name_plural
+        if lower:
+            return ret.lower()
+        return ret

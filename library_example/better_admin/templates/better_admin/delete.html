@@ -1,10 +1,15 @@
 {% extends 'better_admin/base_better_admin.html' %}
+{% load bootstrap %}
 
 {% block content %}
-    <p>Are you sure that you would like to delete this record?</p>
-    <form method="POST" action=".">
+    <form class="form-horizontal well" method="POST" action="{{ request.get_full_path }}">
         {% csrf_token %}
-        <p><input type="submit" value="Yes" />
-				<button href="{{ next }}">No</button></p>
+        <fieldset>
+            <legend>Delete {{ view.get_model_name }}</legend>
+        </fieldset>
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Delete" />
+            <a class="btn" href="{{ next }}">Cancel</button>
+        </div>         
     </form>
 {% endblock %}

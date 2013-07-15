@@ -1,10 +1,20 @@
 {% extends 'better_admin/base_better_admin.html' %}
 {% load render_table from django_tables2 %}
+{% load bootstrap %}
 
 {% block content %}
-<form method="GET" action="{{ request.get_full_path }}">
-    {{ filter.form.as_p }}
-    <input type="submit" value="Submit" />
-</form>
-{% render_table object_list %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    <form class="form-horizontal well" method="GET" action="{{ request.get_full_path }}">
+        <fieldset>
+            <legend>Filter {{ view.get_model_name }}</legend>
+            {{ filter.form|bootstrap }}
+        </fieldset>
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Submit" />
+            <button class="btn">Cancel</button>
+        </div>
+    </form>
+    {% render_table object_list %}
 {% endblock %}

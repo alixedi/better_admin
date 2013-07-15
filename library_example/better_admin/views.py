@@ -1,5 +1,7 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from better_admin.viewmixins import BetterListFilteredMixin, BetterSingleTableMixin
+from django.views.generic import ListView, DetailView, CreateView, \
+    UpdateView, DeleteView
+from better_admin.viewmixins import BetterListFilteredMixin, \
+    BetterSingleTableMixin, BetterMetaMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 
 
@@ -60,6 +62,7 @@ class BetterDetailView(LoginRequiredMixin,
 
 class BetterCreateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
+                       BetterMetaMixin,
                        CreateView):
     '''
     A class-based generic create-view that requires the user to log-in and
