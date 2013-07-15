@@ -201,7 +201,7 @@ class BetterAppAdmin(object):
     app_name = None
 
     # This is where we dump all the objects
-    admins = {}
+    model_admins = {}
 
     def __init__(self):
         '''
@@ -216,7 +216,9 @@ class BetterAppAdmin(object):
         # For each model in the app
         app = get_app(self.app_name)
         for model in get_models(app):
-            self.admins[model._meta.object_name] = self.get_model_admin(model)
+            model_name = model._meta.object_name
+            if not model_name in self.model_admins:
+                self.model_admins[model_name] = self.get_model_admin(model)
 
     def get_model_admin(self, model):
         '''
@@ -232,6 +234,6 @@ class BetterAppAdmin(object):
         Gets url patterns from respective admins, merges and returns them.
         '''
         urlpatterns = patterns('',)
-        for admin in self.admins.values():
-            urlpatterns += admin.get_urls()
+        for model_admin in self.model_admins.values():
+            urlpatterns += model_admin.get_urls()
         return urlpatterns
