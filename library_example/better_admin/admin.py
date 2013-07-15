@@ -22,6 +22,20 @@ class BetterModelAdmin(object):
     # This is necessary
     queryset = None
 
+    # These are optional
+    list_view = None
+    create_view = None
+    detail_view = None
+    update_view = None
+    delete_view = None
+
+    # So are these
+    list_view_template = None
+    create_view_template = None
+    detail_view_template = None
+    update_view_template = None
+    delete_view_template = None
+
     def __init__(self):
         '''
         Check for correct definition of queryset. Check for over-ride of any
@@ -34,11 +48,16 @@ class BetterModelAdmin(object):
                 queryset property in order to work.''')
 
         # If user hasn't specified his own views, provide good defaults
-        self.list_view = getattr(self, 'list_view', self.get_list_view())
-        self.detail_view = getattr(self, 'detail_view', self.get_detail_view())
-        self.create_view = getattr(self, 'create_view', self.get_create_view())
-        self.update_view = getattr(self, 'update_view', self.get_update_view())
-        self.delete_view = getattr(self, 'delete_view', self.get_delete_view())
+        if not self.list_view is None:
+            self.list_view = self.get_list_view()
+        if not self.detail_view is None:
+            self.detail_view = self.get_detail_view()
+        if not self.create_view is None:
+            self.create_view = self.get_create_view()
+        if not self.update_view is None:
+            self.update_view = self.get_update_view()
+        if not self.delete_view is None:
+            self.delete_view = self.get_delete_view()
 
     def get_model_name(self, lower=False, plural=False):
         '''
@@ -66,9 +85,10 @@ class BetterModelAdmin(object):
         A universal getter for the <viewtype>_template property. Where viewtype
         can be list, detail, create, update or delete.
         '''
-        return getattr(self,
-                       '%s_view_template' % viewtype,
-                       'better_admin/%s.html' % viewtype)
+        user_template = getattr(self, '%s_view_template' % viewtype)
+        if user_template is None:
+            return 'better_admin/%s.html' % viewtype
+        return user_template
 
     def get_permission(self, name, app=False):
         '''
