@@ -130,6 +130,8 @@ class BetterModelAdmin(object):
             permission_required = self.get_permission('add', app=True)
             template_name = self.get_template('create')
             success_url = reverse_lazy(self.get_view_name('list'))
+            success_message = "%s was created successfully" % \
+                model._meta.object_name
         return CreateView
 
     def get_update_view(self):
@@ -141,6 +143,8 @@ class BetterModelAdmin(object):
             permission_required = self.get_permission('modify', app=True)
             template_name = self.get_template('update')
             success_url = reverse_lazy(self.get_view_name('detail'))
+            success_message = "%s was updated successfully" % \
+                model._meta.object_name
         return UpdateView
 
     def get_delete_view(self):
@@ -152,6 +156,8 @@ class BetterModelAdmin(object):
             permission_required = self.get_permission('delete', app=True)
             template_name = self.get_template('delete')
             success_url = reverse_lazy(self.get_view_name('list'))
+            success_message = "%s was deleted successfully" % \
+                model._meta.object_name
         return DeleteView
 
     def get_base_url(self):
@@ -212,9 +218,13 @@ class BetterModelAdmin(object):
 
 class BetterAppAdmin(object):
     '''
-    Warning, this is now getting to ridiculous proportions. I do not think
-    anyone would ever need to go here. However, as for first-cuts go, this
-    will provide a reasonable one.
+    Given a django app, this basically introspects the app, extracts all the
+    models and then goes on to create BetterModelAdmins with reasonable
+    defaults for each of the model. Moreover, if you want to do something
+    special for the BetterModelAdmin of one of the models, this allows you
+    to bring your own class and override the defaults. Notice that if you
+    want, you may override with a None in order to not have any admin for
+    the model of your choice.
     '''
 
     # This is necessary

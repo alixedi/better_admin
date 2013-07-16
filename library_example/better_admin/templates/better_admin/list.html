@@ -3,9 +3,6 @@
 {% load bootstrap %}
 
 {% block content %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
     <form class="form-horizontal well" method="GET" action="{{ request.get_full_path }}">
         <fieldset>
             <legend>Filter {{ view.get_model_name }}</legend>

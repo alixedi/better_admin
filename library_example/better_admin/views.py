@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, \
     UpdateView, DeleteView
 from better_admin.viewmixins import BetterListFilteredMixin, \
-    BetterSingleTableMixin, BetterMetaMixin
+    BetterSingleTableMixin, BetterMetaMixin, SuccessMessageMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 
 
@@ -39,6 +39,7 @@ class BetterListView(LoginRequiredMixin,
 
 class BetterDetailView(LoginRequiredMixin,
                        PermissionRequiredMixin,
+                       BetterMetaMixin,
                        DetailView):
     '''
     A class-based generic detail-view that requires the user to log-in and
@@ -62,6 +63,7 @@ class BetterDetailView(LoginRequiredMixin,
 
 class BetterCreateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
+                       SuccessMessageMixin,
                        BetterMetaMixin,
                        CreateView):
     '''
@@ -86,6 +88,8 @@ class BetterCreateView(LoginRequiredMixin,
 
 class BetterUpdateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
+                       SuccessMessageMixin,
+                       BetterMetaMixin,
                        UpdateView):
     '''
     A class-based generic update-view that requires the user to log-in and
@@ -109,6 +113,8 @@ class BetterUpdateView(LoginRequiredMixin,
 
 class BetterDeleteView(LoginRequiredMixin,
                        PermissionRequiredMixin,
+                       SuccessMessageMixin,
+                       BetterMetaMixin,
                        DeleteView):
     '''
     A class-based generic delete-view that requires the user to log-in and

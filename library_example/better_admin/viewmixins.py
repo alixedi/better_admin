@@ -1,6 +1,7 @@
 from django_filters.filterset import filterset_factory
 from django_tables2 import Table, SingleTableMixin
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib import messages
 
 
 # This is not mine. It belongs to django-enhanced-cbvs here:
@@ -113,3 +114,22 @@ class BetterMetaMixin(object):
         if lower:
             return ret.lower()
         return ret
+
+
+# Backported from Django 1.6
+# https://github.com/django/django/blob/master/django/contrib/messages/views.py
+class SuccessMessageMixin(object):
+    """
+    Adds a success message on successful form submission.
+    """
+    success_message = ''
+
+    def form_valid(self, form):
+        response = super(SuccessMessageMixin, self).form_valid(form)
+        success_message = self.get_success_message(form.cleaned_data)
+        if success_message:
+            messages.success(self.request, success_message)
+        return response
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % cleaned_data
