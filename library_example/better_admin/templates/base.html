@@ -1,3 +1,4 @@
+{% load bootstrap_toolkit %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,8 +10,7 @@
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
     <style type="text/css">
       body {
-          background-repeat:repeat;
-          padding-top: 25px;
+          padding-top: 80px;
           padding-bottom: 25px;
         }
         .container-narrow {
@@ -27,15 +27,34 @@
         ul li { 
           margin:3px 0px 2px 0;
         }
+        .table-container th.asc:after {
+          content: '\0000a0\0025b2';
+        }
+        .table-container th.desc:after {
+          content: '\0000a0\0025bc';
+        }
+        .pagination {
+          text-align: center;
+        }
     </style>
   </head>
 
   <body>
-		<div class="container container-narrow">
+		<div class="container">
+      {% include "nav.html" %}
+      {% bootstrap_messages %}
 		  {% block content %}
 		  {% endblock %}
 		</div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script>
+      // When the user clicks the checkbox in table head, select all checkboxes in table body
+      $(function () {
+          $(".table thead tr th.select input:checkbox").click( function () {
+              $(this).closest('table').find(':checkbox').prop('checked', this.checked);
+          });
+      });
+    </script>
   </body>
 </html>
-

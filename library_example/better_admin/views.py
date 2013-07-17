@@ -3,12 +3,15 @@ from django.views.generic import ListView, DetailView, CreateView, \
 from better_admin.viewmixins import BetterListFilteredMixin, \
     BetterSingleTableMixin, BetterMetaMixin, SuccessMessageMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
+from django_actions.views import ActionViewMixin
 
 
 class BetterListView(LoginRequiredMixin,
                      PermissionRequiredMixin,
                      BetterListFilteredMixin,
                      BetterSingleTableMixin,
+                     ActionViewMixin,
+                     BetterMetaMixin,
                      ListView):
     '''
     A class-based generic list-view that requires the user to log-in, checks

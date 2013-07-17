@@ -1,5 +1,5 @@
 {% extends 'userena/base_userena.html' %}
-{% load i18n bootstrap %}
+{% load i18n bootstrap_toolkit %}
 
 {% block title %}{% trans "Signin" %}{% endblock %}
 
@@ -8,7 +8,7 @@
   {% csrf_token %}
   <fieldset>
     <legend>{% trans "Signin" %}</legend>
-    {{ form|bootstrap }}
+    {{ form|as_bootstrap }}
   </fieldset>
   <div class="form-actions">
     <input type="submit" value="{% trans "Signin" %}" class="btn btn-primary" />

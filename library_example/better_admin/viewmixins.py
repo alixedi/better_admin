@@ -1,5 +1,5 @@
 from django_filters.filterset import filterset_factory
-from django_tables2 import Table, SingleTableMixin
+from django_tables2 import Table, SingleTableMixin, CheckBoxColumn
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 
@@ -92,28 +92,30 @@ class BetterSingleTableMixin(SingleTableMixin):
             model_name = model._meta.object_name
             # Dynamic class definition using the type recipe
             # http://docs.python.org/2/library/functions.html#type
-            klass = type('%sTable' % model_name,
-                         (Table,),
-                         dict(model=model))
-            return klass
+            meta = type('Meta', (object,), dict(model=model, sequence=('select', '...')))
+            return type('%sTable' % model_name,
+                        (Table,),
+                        dict(select=CheckBoxColumn(accessor='pk'),
+                             Meta=meta))
 
 
 class BetterMetaMixin(object):
     '''
     Functions for accessing Meta-data in views.
     '''
-    def get_model_name(self, lower=False, plural=False):
+    def get_model_name(self):
         '''
-        Returns the model of that self.queryset belongs to, with support for
-        lowercase as well as plural.
+        Returns name of the model
         '''
         model = self.get_queryset().model
-        ret = model._meta.object_name
-        if plural:
-            ret = model._meta.verbose_name_plural
-        if lower:
-            return ret.lower()
-        return ret
+        return model._meta.object_name
+
+    def get_model_name_plural(self):
+        '''
+        Returns plural name of the model
+        '''
+        model = self.get_queryset().model
+        return model._meta.verbose_name_plural.title()
 
 
 # Backported from Django 1.6

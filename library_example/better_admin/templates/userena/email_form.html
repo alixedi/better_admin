@@ -1,5 +1,5 @@
 {% extends 'userena/base_userena_profile.html' %}
-{% load i18n bootstrap %}
+{% load i18n bootstrap_toolkit %}
 
 {% block title %}{% trans "Change email address" %}{% endblock %}
 
@@ -15,7 +15,7 @@
   {% csrf_token %}
   <fieldset>
     <legend>{% trans "Change email address" %}</legend>
-    {{ form|bootstrap }}
+    {{ form|as_bootstrap }}
   </fieldset>
    <div class="form-actions">
        <input type="submit" class="btn btn-primary" value="{% trans "Change email" %}" />

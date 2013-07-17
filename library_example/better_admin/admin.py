@@ -4,6 +4,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.db.models import get_app, get_models
 from django.core.urlresolvers import reverse_lazy
+from django_nav import Nav, NavOption
+from django_actions.actions import export_csv_action
 
 
 class BetterModelAdmin(object):
@@ -41,11 +43,11 @@ class BetterModelAdmin(object):
         Check for correct definition of queryset. Check for over-ride of any
         of the CRUD views, if not, generate sane defaults.
         '''
-        # Have to define a querysey
+        # Have to define a queryset
         if self.queryset is None:
-            raise ImproperlyConfigured(
-                '''BetterModelAdmin requires a definition of \
-                queryset property in order to work.''')
+            raise ImproperlyConfigured(("BetterModelAdmin requires a "
+                                        "definition of queryset property "
+                                        "in order to work."))
 
         # If user hasn't specified his own views, provide good defaults
         if self.list_view is None:
@@ -59,17 +61,36 @@ class BetterModelAdmin(object):
         if self.delete_view is None:
             self.delete_view = self.get_delete_view()
 
+    def get_queryset(self):
+        '''
+        Returns self.queryset and if it is None, raises an ImproperlyConfigured
+        exception. No need for this extra protection at the moment, but I am
+        including this in view of any future modifications.
+        '''
+        if self.queryset is None:
+            raise ImproperlyConfigured(("BetterModelAdmin requires a "
+                                        "definition of queryset property "
+                                        "in order to work."))
+        return self.queryset
+
+    def get_model(self):
+        '''
+        Returns the model of self.queryset
+        '''
+        queryset = self.get_queryset()
+        return queryset.model
+
     def get_model_name(self, lower=False, plural=False):
         '''
         Returns the model of that self.queryset belongs to, with support for
         lowercase as well as plural.
         '''
-        ret = self.queryset.model._meta.object_name
+        ret = self.get_model()._meta.object_name
         if plural:
-            ret = self.queryset.model._meta.verbose_name_plural
+            ret = self.get_model()._meta.verbose_name_plural
         if lower:
             return ret.lower()
-        return ret
+        return ret.title()
 
     def get_app_name(self, lower=False):
         '''
@@ -77,8 +98,8 @@ class BetterModelAdmin(object):
         support for lowercase.
         '''
         if lower:
-            return self.queryset.model._meta.app_label.lower()
-        return self.queryset.model._meta.app_label
+            return self.get_model()._meta.app_label.lower()
+        return self.get_model()._meta.app_label
 
     def get_template(self, viewtype):
         '''
@@ -105,60 +126,58 @@ class BetterModelAdmin(object):
         '''
         Factory method for BetterListView that returns a sane default.
         '''
-        class ListView(BetterListView):
-            queryset = self.queryset
-            permission_required = self.get_permission('view', app=True)
-            template_name = self.get_template('list')
-        return ListView
+        return type('ListView',
+                    (BetterListView,),
+                    dict(queryset=self.get_queryset(),
+                         permission_required=self.get_permission('view', app=True),
+                         template_name=self.get_template('list'),
+                         actions=[export_csv_action, ]))
 
     def get_detail_view(self):
         '''
         Factory method for BetterDetailView that returns a sane default.
         '''
-        class DetailView(BetterDetailView):
-            model = self.queryset.model
-            permission_required = self.get_permission('view', app=True)
-            template_name = self.get_template('detail')
-        return DetailView
+        return type('DetailView',
+                    (BetterDetailView,),
+                    dict(model=self.get_model(),
+                         permission_required=self.get_permission('view', app=True),
+                         template_name=self.get_template('detail')))
 
     def get_create_view(self):
         '''
         Factory method for BetterCreateView that returns a sane default.
         '''
-        class CreateView(BetterCreateView):
-            model = self.queryset.model
-            permission_required = self.get_permission('add', app=True)
-            template_name = self.get_template('create')
-            success_url = reverse_lazy(self.get_view_name('list'))
-            success_message = "%s was created successfully" % \
-                model._meta.object_name
-        return CreateView
+        return type('CreateView',
+                    (BetterCreateView,),
+                    dict(model=self.get_model(),
+                         permission_required=self.get_permission('add', app=True),
+                         template_name=self.get_template('create'),
+                         success_url=reverse_lazy(self.get_view_name('list')),
+                         success_message="%s was created successfully" % self.get_model_name()))
 
     def get_update_view(self):
         '''
         Factory method for BetterUpdateView that returns a sane default.
         '''
-        class UpdateView(BetterUpdateView):
-            model = self.queryset.model
-            permission_required = self.get_permission('modify', app=True)
-            template_name = self.get_template('update')
-            success_url = reverse_lazy(self.get_view_name('detail'))
-            success_message = "%s was updated successfully" % \
-                model._meta.object_name
-        return UpdateView
+        return type('UpdateView',
+                    (BetterUpdateView,),
+                    dict(model=self.get_model(),
+                         permission_required=self.get_permission('modify', app=True),
+                         template_name=self.get_template('update'),
+                         success_url=reverse_lazy(self.get_view_name('detail')),
+                         success_message="%s was updated successfully" % self.get_model_name()))
 
     def get_delete_view(self):
         '''
         Factory method for BetterDeleteView that returns a sane default.
         '''
-        class DeleteView(BetterDeleteView):
-            model = self.queryset.model
-            permission_required = self.get_permission('delete', app=True)
-            template_name = self.get_template('delete')
-            success_url = reverse_lazy(self.get_view_name('list'))
-            success_message = "%s was deleted successfully" % \
-                model._meta.object_name
-        return DeleteView
+        return type('DeleteView',
+                    (BetterDeleteView,),
+                    dict(model=self.get_model(),
+                         permission_required=self.get_permission('delete', app=True),
+                         template_name=self.get_template('delete'),
+                         success_url=reverse_lazy(self.get_view_name('list')),
+                         success_message="%s was deleted successfully" % self.get_model_name()))
 
     def get_base_url(self):
         '''
@@ -178,6 +197,15 @@ class BetterModelAdmin(object):
         return '%s_%s_%s' % (self.get_app_name(lower=True),
                              self.get_model_name(lower=True),
                              viewtype)
+
+    def get_nav(self):
+        '''
+        Returns subclass of NavOption that points to the ListView of the model.
+        '''
+        return type('%sNavOption' % self.get_model_name(),
+                    (NavOption,),
+                    dict(name=self.get_model_name(plural=True),
+                         view=self.get_view_name('list')))
 
     def get_urls(self):
         '''
@@ -240,15 +268,20 @@ class BetterAppAdmin(object):
         '''
         # Have to define an app
         if self.app_name is None:
-            raise ImproperlyConfigured(
-                '''BetterAppAdmin requires a definition of \
-                app_name property in order to work.''')
+            raise ImproperlyConfigured(("BetterAppAdmin requires a definition "
+                                        "of app_name in order to work."))
         # For each model in the app
         app = get_app(self.app_name)
         for model in get_models(app):
             model_name = model._meta.object_name
             if not model_name in self.model_admins:
                 self.model_admins[model_name] = self.get_model_admin(model)
+
+    def get_app_name(self):
+        if self.app_name is None:
+            raise ImproperlyConfigured(("BetterAppAdmin requires a definition "
+                                        "of app_name in order to work."))
+        return self.app_name
 
     def get_model_admin(self, model):
         '''
@@ -258,6 +291,16 @@ class BetterAppAdmin(object):
                     (BetterModelAdmin,),
                      dict(queryset=model.objects.all()))
         return klass()
+
+    def get_nav(self):
+        '''
+        Returns subclass of Nav that covers the ListViews for its models.
+        '''
+        return type('%sNav' % self.app_name,
+                    (Nav,),
+                    dict(name=self.get_app_name().title(),
+                         view=None,
+                         options=[a.get_nav() for a in self.model_admins.values()]))
 
     def get_urls(self):
         '''

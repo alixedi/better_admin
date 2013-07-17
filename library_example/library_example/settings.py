@@ -125,39 +125,23 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # us
-    'better_admin',
-
-    # not strictly a dep
+    # awesome dev tools
     'debug_toolbar',
 
-    # better_admin deps
-    # reqd for userena bootstrap
-    'bootstrapform',
-    # replacement for bootstrapform
+    'better_admin',
     'bootstrap_toolkit',
-    # bootstrap templaets for userena
-    'userenabootstrap',
-    # for user mgmt
+    'widget_tweaks',
     'userena',
-    # dep of userena
     'guardian',
-    # dep of userena
     'easy_thumbnails',
-    # filtering support
     'django_filters',
-    # awesome cbvs
     'braces',
     'extra_views',
-    # bootstrap for dt2
-    'dt2bootstrap',
-    # painless html tables
     'django_tables2',
+    'django_nav',
+    'django_actions',
 
-    # for user mgmgt
     'accounts',
-    # test app
     'library',
 
     # Uncomment the next line to enable the admin:

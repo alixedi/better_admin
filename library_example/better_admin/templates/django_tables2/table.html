@@ -2,10 +2,6 @@
 {% load trans blocktrans from i18n %}
 {% load bootstrap_toolkit %}
 
-{% if table.page %}
-    <div class="table-container">
-{% endif %}
-
 {% block table %}
     <table class="table table-compact table-bordered"{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
         {% block table.thead %}

@@ -1,17 +1,30 @@
 {% extends 'better_admin/base_better_admin.html' %}
 {% load render_table from django_tables2 %}
-{% load bootstrap %}
+{% load bootstrap_toolkit widget_tweaks %}
 
 {% block content %}
-    <form class="form-horizontal well" method="GET" action="{{ request.get_full_path }}">
-        <fieldset>
-            <legend>Filter {{ view.get_model_name }}</legend>
-            {{ filter.form|bootstrap }}
-        </fieldset>
-        <div class="form-actions">
-            <input type="submit" class="btn btn-primary" value="Submit" />
-            <button class="btn">Cancel</button>
-        </div>
+
+    <form action="" method="post" id="id_action_posts" class="form-inline">
+        {% csrf_token %}
+        {% include 'actions_select.html' %}
+        {% for item in object_list %}
+            <input class="action-select" name="action-select" value="{{ item.id }}" type="checkbox" form="id_action_posts"/>
+        {% endfor %}
     </form>
-    {% render_table object_list %}
+
+
+    <div class="row-fluid">
+        <div class="span10">
+            {% render_table table %}
+        </div>
+        <div class="span2">
+            <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
+                <h5>Filter {{ view.get_model_name_plural }}</h5>
+                {% for field in filter.form %}
+                    <p>{% render_field field placeholder=field.label class+="span12" %}</p>
+                {% endfor %}
+                <input type="submit" class="btn btn-block btn-primary" value="Submit" />
+            </form>
+        </div>
+    </div>
 {% endblock %}
