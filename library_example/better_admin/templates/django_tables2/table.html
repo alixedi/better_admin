@@ -3,7 +3,7 @@
 {% load bootstrap_toolkit %}
 
 {% block table %}
-    <table class="table table-compact table-bordered"{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
+    <table class="table table-compact table-hover table-bordered"{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
         {% block table.thead %}
             <thead>
             <tr>

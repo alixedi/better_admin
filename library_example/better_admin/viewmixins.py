@@ -2,6 +2,7 @@ from django_filters.filterset import filterset_factory
 from django_tables2 import Table, SingleTableMixin, CheckBoxColumn
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 
 
 # This is not mine. It belongs to django-enhanced-cbvs here:
@@ -95,7 +96,8 @@ class BetterSingleTableMixin(SingleTableMixin):
             meta = type('Meta', (object,), dict(model=model, sequence=('select', '...')))
             return type('%sTable' % model_name,
                         (Table,),
-                        dict(select=CheckBoxColumn(accessor='pk'),
+                        dict(select=CheckBoxColumn(accessor='pk',
+                             attrs={'name': 'action-select'}),
                              Meta=meta))
 
 
@@ -116,6 +118,36 @@ class BetterMetaMixin(object):
         '''
         model = self.get_queryset().model
         return model._meta.verbose_name_plural.title()
+
+    def get_app_name(self):
+        '''
+        Reutrns the app name that the model for self.queryset belongs to
+        '''
+        model = self.get_queryset().model
+        return model._meta.app_label
+
+    def get_view_name(self, viewtype):
+        '''
+        Returns a friendly name for our view for use in reverse and the likes.
+        '''
+        return '%s_%s_%s' % (self.get_app_name().lower(),
+                             self.get_model_name().lower(),
+                             viewtype)
+
+    def get_list_url(self):
+        return reverse(self.get_view_name('list'))
+
+    def get_create_url(self):
+        return reverse(self.get_view_name('create'))
+
+    def get_detail_url(self):
+        return reverse(self.get_view_name('detail'))
+
+    def get_update_url(self):
+        return reverse(self.get_view_name('update'))
+
+    def get_delete_url(self):
+        return reverse(self.get_view_name('delete'))
 
 
 # Backported from Django 1.6
