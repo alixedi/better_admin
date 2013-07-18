@@ -1,14 +1,18 @@
 {% extends 'better_admin/base_better_admin.html' %}
 
 {% block content %}
-    <div class="page-header">
-        <h1>{{ object }}</h1>
-    </div>
-    <table class="table table-hover table-bordered">
-    	{% for k, v in object.get_fields %}
-    		<tr>
-    			<td>{{ k }}</td>  <td>{{ v }}</td>
-    		</tr>
-    	{% endfor %}
-    </table>
+    <div class="container-narrow">
+        <div class="well">
+            <legend>{{ object }}</legend>
+            <dl class="dl-horizontal">
+                {% for k,v in object.get_fields %}            
+                    <dt>{{ k|title }}</dt><dd>{{ v }}</dd>
+                {% endfor %}
+            </dl>
+            <div class="form-actions">
+                <a class="btn btn-primary" href="{{ view.get_update_url }}">Update {{ view.get_model_name }}</a>
+                <a class="btn btn-danger" href="{{ view.get_delete_url }}">Delete {{ view.get_model_name }}</a>
+            </div>
+        </div>
+    </div>  
 {% endblock %}

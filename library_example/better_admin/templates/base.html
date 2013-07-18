@@ -58,6 +58,13 @@
   <body>
 		<div class="container">
       {% include "nav.html" %}
+
+<ul class="breadcrumb">
+  <li><a href="#">Home</a> <span class="divider">/</span></li>
+  <li><a href="{{ view.get_list_url }}">{{ view.get_app_name|title }}</a> <span class="divider">/</span></li>
+  <li class="active">{{ view.get_model_name }}</li>
+</ul>
+
       {% bootstrap_messages %}
 		  {% block content %}
 		  {% endblock %}

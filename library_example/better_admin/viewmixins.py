@@ -1,5 +1,6 @@
 from django_filters.filterset import filterset_factory
-from django_tables2 import Table, SingleTableMixin, CheckBoxColumn
+from django_tables2 import Table, SingleTableMixin, CheckBoxColumn, LinkColumn
+from django_tables2.utils import A
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -85,31 +86,38 @@ class BetterSingleTableMixin(SingleTableMixin):
     Details about SingleTableMixin can be read here:
     http://django-tables2.readthedocs.org/en/latest/#class-based-generic-mixins
     '''
+
     def get_table_class(self):
         if self.table_class:
             return self.table_class
         else:
-            model = self.get_base_queryset().model
-            model_name = model._meta.object_name
-            # Dynamic class definition using the type recipe
-            # http://docs.python.org/2/library/functions.html#type
-            meta = type('Meta', (object,), dict(model=model, sequence=('select', '...')))
-            return type('%sTable' % model_name,
+            meta = type('Meta', (), dict(model=self.get_model(),
+                                         sequence=('select', '...')))
+            select = CheckBoxColumn(accessor='pk',
+                                    attrs={'name': 'action-select'})
+            detail = LinkColumn(self.get_view_name('detail'), args=[A('pk')])
+            return type('%sTable' % self.get_model_name(),
                         (Table,),
-                        dict(select=CheckBoxColumn(accessor='pk',
-                             attrs={'name': 'action-select'}),
-                             Meta=meta))
+                        dict([('select', select),
+                              (self.get_model()._meta.pk.name, detail),
+                              ('Meta', meta)]))
 
 
 class BetterMetaMixin(object):
     '''
     Functions for accessing Meta-data in views.
     '''
+    def get_model(self):
+        '''
+        Returns model of defined queryset
+        '''
+        return self.get_queryset().model
+
     def get_model_name(self):
         '''
         Returns name of the model
         '''
-        model = self.get_queryset().model
+        model = self.get_model()
         return model._meta.object_name
 
     def get_model_name_plural(self):
@@ -144,10 +152,10 @@ class BetterMetaMixin(object):
         return reverse(self.get_view_name('detail'))
 
     def get_update_url(self):
-        return reverse(self.get_view_name('update'))
+        return reverse(self.get_view_name('update'), args=(self.object.pk,))
 
     def get_delete_url(self):
-        return reverse(self.get_view_name('delete'))
+        return reverse(self.get_view_name('delete'), args=(self.object.pk,))
 
 
 # Backported from Django 1.6
