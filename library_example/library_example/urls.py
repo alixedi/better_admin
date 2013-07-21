@@ -17,7 +17,5 @@ class LibraryAdmin(BetterAppAdmin):
     app_name = 'library'
 
 library_admin = LibraryAdmin()
-
 urlpatterns += library_admin.get_urls()
-
 nav_groups.register(library_admin.get_nav())

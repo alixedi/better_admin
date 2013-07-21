@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class="container-narrow">
-        <form class="form-horizontal well" method="POST" action="{{ request.get_full_path }}">
+        <form class="form-horizontal" method="POST" action="{{ request.get_full_path }}">
             {% csrf_token %}
             <fieldset>
                 <legend>Delete {{ view.get_model_name }}</legend>

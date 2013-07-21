@@ -1,6 +1,6 @@
 {% load i18n %}
 <select name="action" id="id_action">
-    <option value="-1">--------</option>
+    <option value="-1">Select Action</option>
     {% for action, attrs in actions %}
         <option {% if attrs.class %}class="{{attrs.class}}"{% endif %} value="{{ forloop.counter }}"> {{ action }}</option>
     {% endfor %}

@@ -1,9 +1,8 @@
-{% load bootstrap_toolkit %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bitslink</title>
+    <title>BitsLink</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -14,32 +13,22 @@
     <link href="{{ STATIC_URL }}better_admin/css/font-awesome.css" rel="stylesheet">
     <style type="text/css">
       body {
-          padding-top: 80px;
-          padding-bottom: 25px;
-        }
-        .container-narrow {
-          margin: 0 auto;
-          max-width: 700px;
-        }
-        .container-narrow > hr {
-          margin: 5px 0;
-        }
-        .jumbotron {
-          margin: 50px 0;
-          text-align: center;
-        }
-        ul li { 
-          margin:3px 0px 2px 0;
-        }
-        .table-container th.asc:after {
-          content: '\0000a0\0025b2';
-        }
-        .table-container th.desc:after {
-          content: '\0000a0\0025bc';
-        }
-        .pagination {
-          text-align: center;
-        }
+        padding-top: 80px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .row-large {
+        margin: 50px 0;
+      }
+      .row-large-centered {
+        margin: 50px 0;
+        text-align: center;
+      }
+      .pagination {
+        text-align: center;
+      }
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -58,14 +47,9 @@
   <body>
 		<div class="container">
       {% include "nav.html" %}
-
-<ul class="breadcrumb">
-  <li><a href="#">Home</a> <span class="divider">/</span></li>
-  <li><a href="{{ view.get_list_url }}">{{ view.get_app_name|title }}</a> <span class="divider">/</span></li>
-  <li class="active">{{ view.get_model_name }}</li>
-</ul>
-
-      {% bootstrap_messages %}
+      <div class="page-header">
+          <h1>{{ view.get_model_name_plural }}</h1>
+      </div>
 		  {% block content %}
 		  {% endblock %}
 		</div>

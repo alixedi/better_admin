@@ -2,17 +2,15 @@
 
 {% block content %}
     <div class="container-narrow">
-        <div class="well">
-            <legend>{{ object }}</legend>
-            <dl class="dl-horizontal">
-                {% for k,v in object.get_fields %}            
-                    <dt>{{ k|title }}</dt><dd>{{ v }}</dd>
-                {% endfor %}
-            </dl>
-            <div class="form-actions">
-                <a class="btn btn-primary" href="{{ view.get_update_url }}">Update {{ view.get_model_name }}</a>
-                <a class="btn btn-danger" href="{{ view.get_delete_url }}">Delete {{ view.get_model_name }}</a>
-            </div>
-        </div>
-    </div>  
+        <legend>{{ object }}</legend>
+        <dl class="dl-horizontal">
+            {% for k,v in object.get_fields %}            
+                <dt>{{ k|title }}</dt><dd>{{ v }}</dd>
+            {% endfor %}
+        </dl>
+        <div class="form-actions">
+            <a class="btn btn-primary" href="{{ view.get_update_url }}">Update</a>
+            <a class="btn btn-danger" href="{{ view.get_delete_url }}">Delete</a>
+        </div>         
+    </div>
 {% endblock %}

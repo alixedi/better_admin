@@ -4,22 +4,23 @@
 
 {% block content %}
     <div class="row-fluid">
-        <div class="span10">
-            <form action="" method="post" id="id_action_posts" class="form-inline">
-                {% csrf_token %}
-                <p>
-                    {% include 'django_actions/actions_select.html' %}
-                    <a class="btn btn-success pull-right" href="{{ view.get_create_url }}">Create {{ view.get_model_name }}</a>
-                </p>
-                {% render_table table %}
-            </form>
-        </div>
         <div class="span2">
             <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
                 {% for field in filter.form %}
                     <p>{% render_field field placeholder=field.label class+="span12" %}</p>
                 {% endfor %}
-                <input type="submit" class="btn btn-warning" value="Filter {{ view.get_model_name_plural }}" />
+                <button type="submit" class="btn btn-warning pull-right">Filter</button>
+            </form>
+        </div>
+        <div class="span10">
+            {% bootstrap_messages %}
+            <form action="" method="post" id="id_action_posts" class="form-inline">
+                {% csrf_token %}
+                <p>
+                    {% include 'django_actions/actions_select.html' %}
+                    <a class="btn btn-success pull-right" href="{{ view.get_create_url }}">Create</a>
+                </p>
+                {% render_table table %}
             </form>
         </div>
     </div>
