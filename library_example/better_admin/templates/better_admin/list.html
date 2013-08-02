@@ -1,6 +1,5 @@
 {% extends 'better_admin/base_better_admin.html' %}
-{% load render_table from django_tables2 %}
-{% load bootstrap_toolkit widget_tweaks %}
+{% load bootstrap_toolkit widget_tweaks pagination_tags sorting %}
 
 {% block content %}
     <div class="row-fluid">
@@ -20,8 +19,50 @@
                     {% include 'django_actions/actions_select.html' %}
                     <a class="btn btn-success pull-right" href="{{ view.get_create_url }}">Create</a>
                 </p>
-                {% render_table table %}
+                {% if object_list %}
+                    {% auto_sort object_list %}
+                    {% autopaginate object_list 2 %}
+                    <table class="table">
+                        {% for object in object_list %}
+                            {% if forloop.first %}
+                                <thead>
+                                    <tr>
+                                        {% for key, val in object.get_fields %}
+                                            <th>{% sort_link key key %}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                            {% endif %}
+                            <tr>
+                            {% for k,v in object.get_fields %}
+                                <td>{{v}}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    Empty
+                {% endif %}
             </form>
+
+            {% if is_paginated %}
+                {% paginate %}
+                <ul class="pager">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><a>&laquo;</a></li>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.has_next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><a>&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            {% endif %}
         </div>
+
     </div>
 {% endblock %}

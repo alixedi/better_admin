@@ -80,6 +80,13 @@ class BetterModelAdmin(object):
         queryset = self.get_queryset()
         return queryset.model
 
+    def get_model_field_names(self):
+        '''
+        Returns the field names of model
+        '''
+        model = self.get_model()
+        return model._meta.get_all_field_names()        
+
     def get_model_name(self, lower=False, plural=False):
         '''
         Returns the model of that self.queryset belongs to, with support for

@@ -7,6 +7,7 @@ from django_nav import nav_groups
 
 urlpatterns = patterns('',
     (r'^accounts/', include('userena.urls')),
+    url(r'^add/(?P<model_name>\w+)/?$', 'tekextensions.views.add_new_model'),
 )
 
 

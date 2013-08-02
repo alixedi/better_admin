@@ -1,6 +1,4 @@
 from django_filters.filterset import filterset_factory
-from django_tables2 import Table, SingleTableMixin, CheckBoxColumn, LinkColumn
-from django_tables2.utils import A
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -77,35 +75,14 @@ class BetterListFilteredMixin(ListFilteredMixin):
             return klass
 
 
-class BetterSingleTableMixin(SingleTableMixin):
-    '''
-    We are going to try and generate a default Table is none is specified
-    using the table_class property instead of raising an ImproperlyConfigured
-    exception.
-
-    Details about SingleTableMixin can be read here:
-    http://django-tables2.readthedocs.org/en/latest/#class-based-generic-mixins
-    '''
-
-    def get_table_class(self):
-        if self.table_class:
-            return self.table_class
-        else:
-            meta = type('Meta', (), dict(model=self.get_model(),
-                                         sequence=('select', '...')))
-            select = CheckBoxColumn(accessor='pk',
-                                    attrs={'name': 'action-select'})
-            detail = LinkColumn(self.get_view_name('detail'), args=[A('pk')])
-            return type('%sTable' % self.get_model_name(),
-                        (Table,),
-                        dict([('select', select),
-                              (self.get_model()._meta.pk.name, detail),
-                              ('Meta', meta)]))
-
-
 class BetterMetaMixin(object):
     '''
     Functions for accessing Meta-data in views.
+    #####################################################
+    TODO: Functions in this class are clearly duplicated
+    of those in the BetterModelAdmin class. This symptoms
+    say that probably the code can be better organized.
+    #####################################################
     '''
     def get_model(self):
         '''
