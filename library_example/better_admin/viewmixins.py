@@ -12,7 +12,6 @@ class ListFilteredMixin(object):
     """
     Mixin that adds support for django-filter
     """
-
     filter_set = None
 
     def get_filter_set(self):
@@ -34,8 +33,8 @@ class ListFilteredMixin(object):
 
     def get_base_queryset(self):
         """
-        We can decided to either alter the queryset before or after applying the
-        FilterSet
+        We can decided to either alter the queryset before or after applying
+        the FilterSet
         """
         return super(ListFilteredMixin, self).get_queryset()
 

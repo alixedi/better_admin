@@ -85,7 +85,7 @@ class BetterModelAdmin(object):
         Returns the field names of model
         '''
         model = self.get_model()
-        return model._meta.get_all_field_names()        
+        return model._meta.get_all_field_names()
 
     def get_model_name(self, lower=False, plural=False):
         '''
@@ -96,8 +96,8 @@ class BetterModelAdmin(object):
         if plural:
             ret = self.get_model()._meta.verbose_name_plural
         if lower:
-            return ret.lower()
-        return ret.title()
+            ret = ret.lower()
+        return ret
 
     def get_app_name(self, lower=False):
         '''
@@ -171,7 +171,7 @@ class BetterModelAdmin(object):
                     dict(model=self.get_model(),
                          permission_required=self.get_permission('modify', app=True),
                          template_name=self.get_template('update'),
-                         success_url=reverse_lazy(self.get_view_name('detail')),
+                         success_url=reverse_lazy(self.get_view_name('list')),
                          success_message="%s was updated successfully" % self.get_model_name()))
 
     def get_delete_view(self):
