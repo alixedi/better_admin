@@ -83,3 +83,10 @@ class BetterMetaMixin(object):
         Returns DeleteView URL.
         '''
         return reverse(self.get_view_name('delete'), args=(self.object.pk,))
+
+    def get_model_field_names(self):
+        '''
+        Returns the field names of model
+        '''
+        model = self.get_model()
+        return model._meta.get_all_field_names()

@@ -1,5 +1,6 @@
 from better_admin.views import BetterListView, BetterDetailView, \
     BetterCreateView, BetterUpdateView, BetterDeleteView
+from better_admin.mixins import BetterMetaMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.db.models import get_app, get_models
@@ -8,7 +9,8 @@ from django_nav import Nav, NavOption
 from django_actions.actions import export_csv_action
 
 
-class BetterModelAdmin(object):
+
+class BetterModelAdmin(BetterMetaMixin):
     '''
     BetterModelAdmin tries to do what django's default ModelAdmin does. By
     saying 'tries', we are implicitly proposing slghtly tangent design goals
@@ -73,41 +75,6 @@ class BetterModelAdmin(object):
                                         "in order to work."))
         return self.queryset
 
-    def get_model(self):
-        '''
-        Returns the model of self.queryset
-        '''
-        queryset = self.get_queryset()
-        return queryset.model
-
-    def get_model_field_names(self):
-        '''
-        Returns the field names of model
-        '''
-        model = self.get_model()
-        return model._meta.get_all_field_names()
-
-    def get_model_name(self, lower=False, plural=False):
-        '''
-        Returns the model of that self.queryset belongs to, with support for
-        lowercase as well as plural.
-        '''
-        ret = self.get_model()._meta.object_name
-        if plural:
-            ret = self.get_model()._meta.verbose_name_plural
-        if lower:
-            ret = ret.lower()
-        return ret
-
-    def get_app_name(self, lower=False):
-        '''
-        Reutrns the app name that the model for self.queryset belongs to, with
-        support for lowercase.
-        '''
-        if lower:
-            return self.get_model()._meta.app_label.lower()
-        return self.get_model()._meta.app_label
-
     def get_template(self, viewtype):
         '''
         A universal getter for the <viewtype>_template property. Where viewtype
@@ -124,7 +91,7 @@ class BetterModelAdmin(object):
         one wants to include app name (<app_name>.<permission_name>_
         <model_name_lower>) or not (<permission_name>_<model_name_lower>)
         '''
-        permission = '%s_%s' % (name, self.get_model_name(lower=True))
+        permission = '%s_%s' % (name, self.get_model_name().lower())
         if app:
             permission = '%s.%s' % (self.get_app_name(), permission)
         return permission
@@ -193,18 +160,8 @@ class BetterModelAdmin(object):
         happens to lie. The base url will be <app_name_lower>/
         <model_name_lower_plural>
         '''
-        return '%s/%s' % (self.get_app_name(lower=True),
-                          self.get_model_name(lower=True, plural=True))
-
-    def get_view_name(self, viewtype):
-        '''
-        Returns a friendly name for our view for use in reverse and the likes.
-        Convention goes like this: <app_name_lower>_<model_name_lower>_
-        <viewtype> where viewtype are the usual CRUD suspects.
-        '''
-        return '%s_%s_%s' % (self.get_app_name(lower=True),
-                             self.get_model_name(lower=True),
-                             viewtype)
+        return '%s/%s' % (self.get_app_name().lower(),
+                          self.get_model_name_plural().lower())
 
     def get_nav(self):
         '''
@@ -212,7 +169,7 @@ class BetterModelAdmin(object):
         '''
         return type('%sNavOption' % self.get_model_name(),
                     (NavOption,),
-                    dict(name=self.get_model_name(plural=True),
+                    dict(name=self.get_model_name_plural(),
                          view=self.get_view_name('list')))
 
     def get_urls(self):
