@@ -171,6 +171,7 @@ class BetterModelAdmin(object):
                     dict(model=self.get_model(),
                          permission_required=self.get_permission('modify', app=True),
                          template_name=self.get_template('update'),
+                         # FIXME: Should redirect to DetailView on success!
                          success_url=reverse_lazy(self.get_view_name('list')),
                          success_message="%s was updated successfully" % self.get_model_name()))
 

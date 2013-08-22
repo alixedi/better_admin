@@ -1,7 +1,8 @@
 from django.views.generic import ListView, DetailView, CreateView, \
     UpdateView, DeleteView
 from better_admin.viewmixins import BetterListFilteredMixin, \
-    BetterMetaMixin, SuccessMessageMixin
+    SuccessMessageMixin
+from better_admin.mixins import BetterMetaMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from django_actions.views import ActionViewMixin
 
