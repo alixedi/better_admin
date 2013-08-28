@@ -9,8 +9,6 @@
 
     <!-- Le styles -->
     <link href="{{ STATIC_URL }}better_admin/css/bootstrap.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}better_admin/css/font-awesome.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}better_admin/css/bootstrap-select.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}better_admin/css/bootstrap-responsive.css" rel="stylesheet">
     <style type="text/css">
       body {
@@ -56,7 +54,6 @@
 		</div>
     <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/jquery.js"></script>
     <script src="{{ STATIC_URL }}better_admin/js/jquery.expander.js"></script>
-    <script src="{{ STATIC_URL }}better_admin/js/bootstrap-select.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/bootstrap.js"></script>
     <script src="{{ ADMIN_MEDIA_PREFIX }}js/admin/RelatedObjectLookups.js"></script>
     <script>
@@ -75,11 +72,6 @@
           expandText:'more', // default is 'read more'
           userCollapseText:'less'  // default is 'read less'
         });
-      });
-
-      // prettify the select boxes 
-      $(function () {
-        $('select').selectpicker();
       });
     </script>
   </body>

@@ -20,8 +20,11 @@ def add_new_model(request, model_name, form=None):
                 new_obj = None
 
             if new_obj:
-                return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
-                    (escape(new_obj._get_pk_val()), escape(new_obj)))
+                return HttpResponse("""
+                    <script type="text/javascript">
+                        opener.dismissAddAnotherPopup(window, "%s", "%s");
+                        $('.selectpicker').selectpicker('render');
+                    </script>""" % (escape(new_obj._get_pk_val()), escape(new_obj)))
 
     else:
         form = form()
