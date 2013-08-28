@@ -53,15 +53,15 @@ class BetterModelAdmin(BetterMetaMixin):
 
         # If user hasn't specified his own views, provide good defaults
         if self.list_view is None:
-            self.list_view = self.get_list_view()
+            self.list_view = self.list_view_factory()
         if self.detail_view is None:
-            self.detail_view = self.get_detail_view()
+            self.detail_view = self.detail_view_factory()
         if self.create_view is None:
-            self.create_view = self.get_create_view()
+            self.create_view = self.create_view_factory()
         if self.update_view is None:
-            self.update_view = self.get_update_view()
+            self.update_view = self.update_view_factory()
         if self.delete_view is None:
-            self.delete_view = self.get_delete_view()
+            self.delete_view = self.delete_view_factory()
 
     def get_queryset(self):
         '''
@@ -96,7 +96,7 @@ class BetterModelAdmin(BetterMetaMixin):
             permission = '%s.%s' % (self.get_app_name(), permission)
         return permission
 
-    def get_list_view(self):
+    def list_view_factory(self):
         '''
         Factory method for BetterListView that returns a sane default.
         '''
@@ -107,7 +107,7 @@ class BetterModelAdmin(BetterMetaMixin):
                          template_name=self.get_template('list'),
                          actions=[export_csv_action, ]))
 
-    def get_detail_view(self):
+    def detail_view_factory(self):
         '''
         Factory method for BetterDetailView that returns a sane default.
         '''
@@ -117,7 +117,7 @@ class BetterModelAdmin(BetterMetaMixin):
                          permission_required=self.get_permission('view', app=True),
                          template_name=self.get_template('detail')))
 
-    def get_create_view(self):
+    def create_view_factory(self):
         '''
         Factory method for BetterCreateView that returns a sane default.
         '''
@@ -129,7 +129,7 @@ class BetterModelAdmin(BetterMetaMixin):
                          success_url=reverse_lazy(self.get_view_name('list')),
                          success_message="%s was created successfully" % self.get_model_name()))
 
-    def get_update_view(self):
+    def update_view_factory(self):
         '''
         Factory method for BetterUpdateView that returns a sane default.
         '''
@@ -142,7 +142,7 @@ class BetterModelAdmin(BetterMetaMixin):
                          success_url=reverse_lazy(self.get_view_name('list')),
                          success_message="%s was updated successfully" % self.get_model_name()))
 
-    def get_delete_view(self):
+    def delete_view_factory(self):
         '''
         Factory method for BetterDeleteView that returns a sane default.
         '''
@@ -182,7 +182,6 @@ class BetterModelAdmin(BetterMetaMixin):
         update_view: /app_name/model_name_plural/pk/update
         delete_view: /app_name/model_name_plural/pk/delete
         '''
-
         return patterns(
 
             '%s.views' % self.get_app_name(),
@@ -219,7 +218,6 @@ class BetterAppAdmin(object):
     want, you may override with a None in order to not have any admin for
     the model of your choice.
     '''
-
     # This is necessary
     app_name = None
 

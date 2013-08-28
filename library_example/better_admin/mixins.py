@@ -84,9 +84,9 @@ class BetterMetaMixin(object):
         '''
         return reverse(self.get_view_name('delete'), args=(self.object.pk,))
 
-    def get_model_field_names(self):
+    def get_model_fields(self):
         '''
         Returns the field names of model
         '''
         model = self.get_model()
-        return model._meta.get_all_field_names()
+        return model._meta.fields

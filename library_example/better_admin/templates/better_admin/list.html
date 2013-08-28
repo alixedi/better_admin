@@ -1,59 +1,30 @@
 {% extends 'better_admin/base_better_admin.html' %}
-{% load bootstrap_toolkit widget_tweaks pagination_tags sorting %}
+{% load bootstrap_toolkit widget_tweaks %}
 
 {% block content %}
-    <div class="row-fluid">
-        <div class="span2">
-            <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
-                {% for field in filter.form %}
-                    <p>{% render_field field placeholder=field.label class+="span12" %}</p>
-                {% endfor %}
-                <button type="submit" class="btn btn-warning pull-right">Filter</button>
-            </form>
-        </div>
-        <div class="span10">
-            {% bootstrap_messages %}
-            <form action="" method="post" id="id_action_posts" class="form-inline">
-                {% csrf_token %}
-                <p>
-                    {% include 'django_actions/actions_select.html' %}
-                    <a class="btn btn-success pull-right" href="{{ view.get_create_url }}">Create</a>
-                </p>
-                {% if object_list %}
-                    {% auto_sort object_list %}
-                    {% autopaginate object_list 2 %}
-                    <table class="table">
-                        {% for object in object_list %}
-                            {% if forloop.first %}
-                                <thead>
-                                    <tr>
-                                        <!-- 
-                                        FIXME: get_fields is hacky and should be replaced by something better.
-                                        I am thinking of writing a few template tags. Can the template tag be
-                                        smart? For instance rendering links for ForeignKeys, URLs, Emails etc?
-                                        Do keep in mind that all of this will essentially only enhance the case
-                                        when we are using the default templates. 
-                                        -->
-                                        {% for key, val in object.get_fields %}
-                                            <th>{% sort_link key key %}</th>
-                                        {% endfor %}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                            {% endif %}
-                            <tr>
-                            {% for k,v in object.get_fields %}
-                                <td>{{ v }}</td>
-                            {% endfor %}
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    {% paginate %}
-                {% else %}
-                    Empty
-                {% endif %}
-            </form>
-        </div>
+<div class="row-fluid">
+    <div class="span2">
+        <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
+            {% for field in filter.form %}
+            <p>{% render_field field placeholder=field.label class+="span12" %}</p>
+            {% endfor %}
+            <button type="submit" class="btn btn-warning pull-right">Filter</button>
+        </form>
     </div>
+    <div class="span10">
+        {% bootstrap_messages %}
+        <form action="" method="post" id="id_action_posts" class="form-inline">
+            {% csrf_token %}
+            <p>
+                {% include 'django_actions/actions_select.html' %}
+                <a class="btn btn-success pull-right" href="{{ view.get_create_url }}">Create</a>
+            </p>
+            {% if object_list %}
+            {% include 'better_admin/table.html' %}
+            {% else %}
+                Empty
+            {% endif %}
+        </form>
+    </div>
+</div>
 {% endblock %}

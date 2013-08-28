@@ -1,0 +1,28 @@
+{% load bootstrap_toolkit %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8">
+	    <title>Add {{ field }}</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+		<link href="{{ STATIC_URL }}better_admin/css/bootstrap.css" rel="stylesheet">
+		<link href="{{ STATIC_URL }}better_admin/css/bootstrap-select.css" rel="stylesheet">
+		<link href="{{ STATIC_URL }}better_admin/css/bootstrap-responsive.css" rel="stylesheet">
+		<script src="{{ ADMIN_MEDIA_PREFIX }}js/admin/RelatedObjectLookups.js"></script>
+	</head>
+	<body>
+		<form class="form-horizontal" method="POST" action="/add/{{ field }}" enctype="multipart/form-data">
+			{% csrf_token %}
+		    <fieldset>
+		        <legend>Create {{ field }}</legend>
+		        {{ form|as_bootstrap }}
+		    </fieldset>
+		    <div class="form-actions">
+		        <input type="submit" class="btn btn-primary" value="Submit" />
+		        <button class="btn" onclick="javascript:window.close()">Cancel</button>
+		    </div>
+		</form>
+	</body>
+</html>
