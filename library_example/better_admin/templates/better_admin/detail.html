@@ -1,11 +1,12 @@
 {% extends 'better_admin/base_better_admin.html' %}
+{% load better_admin %}
 
 {% block content %}
     <div class="container-narrow">
         <legend>{{ object }}</legend>
         <dl class="dl-horizontal">
-            {% for k,v in object.get_fields %}            
-                <dt>{{ k|title }}</dt><dd>{{ v }}</dd>
+            {% for field in view.get_model_fields %}            
+                <dt>{{ field.name|title }}</dt><dd>{{ object|get_field_value:field.name }}</dd>
             {% endfor %}
         </dl>
         <div class="form-actions">

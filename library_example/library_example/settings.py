@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     # awesome dev tools
     'debug_toolbar',
+    'django_coverage',
 
     'better_admin',
     'bootstrap_toolkit',

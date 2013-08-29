@@ -68,18 +68,21 @@ class BetterMetaMixin(object):
 
     def get_detail_url(self):
         '''
+        TODO: Doesn't work in ListView!!! No object!!!
         Returns DetailView URL.
         '''
         return reverse(self.get_view_name('detail'), args=(self.object.pk,))
 
     def get_update_url(self):
         '''
+        TODO: Doesn't work in ListView!!! No object!!!
         Returns UpdateView URL.
         '''
         return reverse(self.get_view_name('update'), args=(self.object.pk,))
 
     def get_delete_url(self):
         '''
+        TODO: Doesn't work in ListView!!! No object!!!
         Returns DeleteView URL.
         '''
         return reverse(self.get_view_name('delete'), args=(self.object.pk,))
