@@ -1,8 +1,8 @@
 from django.views.generic import ListView, DetailView, CreateView, \
     UpdateView, DeleteView
 from better_admin.viewmixins import BetterListFilteredMixin, \
-    SuccessMessageMixin
-from better_admin.mixins import BetterMetaMixin
+    SuccessMessageMixin, DetailRedirectMixin, HookedFormMixin
+from better_admin.mixins import MetaMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from django_actions.views import ActionViewMixin
 
@@ -11,7 +11,7 @@ class BetterListView(LoginRequiredMixin,
                      PermissionRequiredMixin,
                      BetterListFilteredMixin,
                      ActionViewMixin,
-                     BetterMetaMixin,
+                     MetaMixin,
                      ListView):
     '''
     A class-based generic list-view that requires the user to log-in, checks
@@ -42,7 +42,7 @@ class BetterListView(LoginRequiredMixin,
 
 class BetterDetailView(LoginRequiredMixin,
                        PermissionRequiredMixin,
-                       BetterMetaMixin,
+                       MetaMixin,
                        DetailView):
     '''
     A class-based generic detail-view that requires the user to log-in and
@@ -67,7 +67,8 @@ class BetterDetailView(LoginRequiredMixin,
 class BetterCreateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        SuccessMessageMixin,
-                       BetterMetaMixin,
+                       MetaMixin,
+                       HookedFormMixin,
                        CreateView):
     '''
     A class-based generic create-view that requires the user to log-in and
@@ -92,7 +93,9 @@ class BetterCreateView(LoginRequiredMixin,
 class BetterUpdateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        SuccessMessageMixin,
-                       BetterMetaMixin,
+                       MetaMixin,
+                       HookedFormMixin,
+                       DetailRedirectMixin,
                        UpdateView):
     '''
     A class-based generic update-view that requires the user to log-in and
@@ -117,7 +120,7 @@ class BetterUpdateView(LoginRequiredMixin,
 class BetterDeleteView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        SuccessMessageMixin,
-                       BetterMetaMixin,
+                       MetaMixin,
                        DeleteView):
     '''
     A class-based generic delete-view that requires the user to log-in and

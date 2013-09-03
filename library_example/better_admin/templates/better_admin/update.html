@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class="container-narrow">
-        <form class="form-horizontal" method="POST" action="{{ request.get_full_path }}">
+        <form class="form-horizontal" method="POST" action="{{ request.get_full_path }}" enctype="multipart/form-data">
         	{% csrf_token %}
             <fieldset>
                 <legend>Update {{ view.get_model_name }}</legend>
@@ -11,7 +11,7 @@
             </fieldset>
             <div class="form-actions">
                 <input type="submit" class="btn btn-primary" value="Submit" />
-                <button class="btn">Cancel</button>
+                <a href="./">Cancel</a>
             </div>
         </form>
     </div>

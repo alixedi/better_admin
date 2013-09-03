@@ -5,13 +5,13 @@
     <div class="container-narrow">
         <legend>{{ object }}</legend>
         <dl class="dl-horizontal">
-            {% for field in view.get_model_fields %}            
+            {% for field in view.get_model_fields %}
                 <dt>{{ field.name|title }}</dt><dd>{{ object|get_field_value:field.name }}</dd>
             {% endfor %}
         </dl>
         <div class="form-actions">
-            <a class="btn btn-primary" href="{{ view.get_update_url }}">Update</a>
-            <a class="btn btn-danger" href="{{ view.get_delete_url }}">Delete</a>
+            <a class="btn btn-primary" href="./update">Update</a>
+            <a class="btn btn-danger" href="./delete">Delete</a>
         </div>         
     </div>
 {% endblock %}

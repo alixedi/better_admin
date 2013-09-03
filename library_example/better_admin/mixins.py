@@ -1,11 +1,8 @@
-from django.core.urlresolvers import reverse
-
-
-class BetterMetaMixin(object):
+class MetaMixin(object):
     '''
     Functions that answer common questions about model. 
     The code asking these questions at the moment reside 
-    in BeeterModelAdmin and also in various templates. 
+    in BeterModelAdmin and also in various templates. 
     This started as being a part of the viewmixins but I 
     soon found myself writing the same functions for the 
     admin. In order to keep things DRY, I am moving it here. 
@@ -54,42 +51,16 @@ class BetterMetaMixin(object):
                              self.get_model_name().lower(),
                              viewtype)
 
-    def get_list_url(self):
-        '''
-        Returns ListView URL.
-        '''
-        return reverse(self.get_view_name('list'))
-
-    def get_create_url(self):
-        '''
-        Returns CreateView URL.
-        '''
-        return reverse(self.get_view_name('create'))
-
-    def get_detail_url(self):
-        '''
-        TODO: Doesn't work in ListView!!! No object!!!
-        Returns DetailView URL.
-        '''
-        return reverse(self.get_view_name('detail'), args=(self.object.pk,))
-
-    def get_update_url(self):
-        '''
-        TODO: Doesn't work in ListView!!! No object!!!
-        Returns UpdateView URL.
-        '''
-        return reverse(self.get_view_name('update'), args=(self.object.pk,))
-
-    def get_delete_url(self):
-        '''
-        TODO: Doesn't work in ListView!!! No object!!!
-        Returns DeleteView URL.
-        '''
-        return reverse(self.get_view_name('delete'), args=(self.object.pk,))
-
     def get_model_fields(self):
         '''
         Returns the field names of model
         '''
         model = self.get_model()
         return model._meta.fields
+
+
+class HookedFieldMixin(object):
+    """
+    Enhances django form field classes with pre-rendering and pre-saving
+    hooks. To be used in unison with 
+    """

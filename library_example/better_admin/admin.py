@@ -1,6 +1,6 @@
 from better_admin.views import BetterListView, BetterDetailView, \
     BetterCreateView, BetterUpdateView, BetterDeleteView
-from better_admin.mixins import BetterMetaMixin
+from better_admin.mixins import MetaMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 from django.db.models import get_app, get_models
@@ -10,7 +10,7 @@ from django_actions.actions import export_csv_action
 
 
 
-class BetterModelAdmin(BetterMetaMixin):
+class BetterModelAdmin(MetaMixin):
     '''
     BetterModelAdmin tries to do what django's default ModelAdmin does. By
     saying 'tries', we are implicitly proposing slghtly tangent design goals
@@ -39,6 +39,11 @@ class BetterModelAdmin(BetterMetaMixin):
     detail_view_template = None
     update_view_template = None
     delete_view_template = None
+
+    # Magic for frequent form patterns
+    pre_render = None
+    pre_save = None
+
 
     def __init__(self):
         '''
@@ -126,6 +131,8 @@ class BetterModelAdmin(BetterMetaMixin):
                     dict(model=self.get_model(),
                          permission_required=self.get_permission('add', app=True),
                          template_name=self.get_template('create'),
+                         pre_render=self.pre_render,
+                         pre_save=self.pre_save,
                          success_url=reverse_lazy(self.get_view_name('list')),
                          success_message="%s was created successfully" % self.get_model_name()))
 
@@ -138,8 +145,8 @@ class BetterModelAdmin(BetterMetaMixin):
                     dict(model=self.get_model(),
                          permission_required=self.get_permission('modify', app=True),
                          template_name=self.get_template('update'),
-                         # FIXME: Should redirect to DetailView on success!
-                         success_url=reverse_lazy(self.get_view_name('list')),
+                         pre_render=self.pre_render,
+                         pre_save=self.pre_save,
                          success_message="%s was updated successfully" % self.get_model_name()))
 
     def delete_view_factory(self):
@@ -190,7 +197,7 @@ class BetterModelAdmin(BetterMetaMixin):
                 self.create_view.as_view(),
                 name=self.get_view_name('create')),
 
-            url(r'^%s/(?P<pk>\d+)$' % self.get_base_url(),
+            url(r'^%s/(?P<pk>\d+)/$' % self.get_base_url(),
                 self.detail_view.as_view(),
                 name=self.get_view_name('detail')),
 

@@ -1,6 +1,7 @@
 from django_filters.filterset import filterset_factory
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
+from django.core.urlresolvers import reverse_lazy
 
 
 # This is not mine. It belongs to django-enhanced-cbvs here:
@@ -71,6 +72,36 @@ class BetterListFilteredMixin(ListFilteredMixin):
             # django_filter has a filterset_factory
             klass = filterset_factory(model)
             return klass
+
+
+class DetailRedirectMixin(object):
+    """
+    To be used in CBVs derived from FormView. Provides get_success_url function
+    that redirects to DetailView.
+    """
+    def get_success_url(self):
+        obj = self.get_object()
+        return reverse_lazy(self.get_view_name('detail'), args=(obj.pk,))
+
+
+class HookedFormMixin(object):
+    """
+    To be used with CBVs derived from FormView. Provides pre-rendering and
+    pre-saving hooks for inserting useful logic. 
+    """
+    pre_render = None
+    pre_save = None
+
+    def get_form(self, form_class):
+        form = form_class(**self.get_form_kwargs())
+        if not self.pre_render == None:
+            self.pre_render(form, self.request)
+        return form
+
+    def form_valid(self, form):
+        if not self.pre_save == None:
+            self.pre_save(form, self.request)
+        return super(HookedFormMixin, self).form_valid(form)
 
 
 # Backported from Django 1.6
