@@ -40,9 +40,23 @@ class BetterModelAdmin(MetaMixin):
     update_view_template = None
     delete_view_template = None
 
-    # Magic for frequent form patterns
+    # The paramters coming below are essentially compromising the
+    # design pholosophy of better_admin - cascading. If I keep to
+    # principles, better_admin should only allow for override of
+    # the list_view for instance and not expose the various parameters
+    # configurable in list_view to ModelAdmin. The reason for this
+    # is to keep the interfaces clean and minimalistic.
+
+    # Optional hooks for form patterns
+    # These will be applied to create and update views
     pre_render = None
     pre_save = None
+
+    # Optional actions
+    actions = [export_csv_action,]
+
+    # Optional override for filterest 
+    filter_set = None
 
 
     def __init__(self):
@@ -110,7 +124,8 @@ class BetterModelAdmin(MetaMixin):
                     dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('view', app=True),
                          template_name=self.get_template('list'),
-                         actions=[export_csv_action, ]))
+                         filter_set=self.filter_set,
+                         actions=self.actions))
 
     def detail_view_factory(self):
         '''
@@ -118,7 +133,7 @@ class BetterModelAdmin(MetaMixin):
         '''
         return type('DetailView',
                     (BetterDetailView,),
-                    dict(model=self.get_model(),
+                    dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('view', app=True),
                          template_name=self.get_template('detail')))
 
@@ -128,7 +143,7 @@ class BetterModelAdmin(MetaMixin):
         '''
         return type('CreateView',
                     (BetterCreateView,),
-                    dict(model=self.get_model(),
+                    dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('add', app=True),
                          template_name=self.get_template('create'),
                          pre_render=self.pre_render,
@@ -142,7 +157,7 @@ class BetterModelAdmin(MetaMixin):
         '''
         return type('UpdateView',
                     (BetterUpdateView,),
-                    dict(model=self.get_model(),
+                    dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('modify', app=True),
                          template_name=self.get_template('update'),
                          pre_render=self.pre_render,
@@ -155,7 +170,7 @@ class BetterModelAdmin(MetaMixin):
         '''
         return type('DeleteView',
                     (BetterDeleteView,),
-                    dict(model=self.get_model(),
+                    dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('delete', app=True),
                          template_name=self.get_template('delete'),
                          success_url=reverse_lazy(self.get_view_name('list')),

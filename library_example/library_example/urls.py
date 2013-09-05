@@ -16,19 +16,30 @@ urlpatterns = patterns('',
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
+import django_filters
+
+class TariffFilterSet(django_filters.FilterSet):
+    class Meta:
+        model = Tariff
+        fields = ['codes', 'expired']
+    def __init__(self, *args, **kwargs):
+        super(TariffFilterSet, self).__init__(*args, **kwargs)
+        self.filters['codes'].lookup_type = None
+        print type(self.filters['codes'])
+
 from better_admin.admin import BetterAppAdmin, BetterModelAdmin
 
-
-
 class TariffModelAdmin(BetterModelAdmin):
-    queryset = Tariff.objects.all()
-    
+    #queryset = Tariff.objects.all()
+    queryset = Tariff.objects.filter(company__name='Bhaoo')
+    #filter_set = TariffFilterSet
+
     def pre_render(self, form, request):
-        del form.fields['company']
+        #del form.fields['company']
         form.fields['kams'].queryset = KAM.objects.filter(permanent=True)
 
-    def pre_save(self, form, request):
-        form.instance.company = Company.objects.get(name='Bhaoo')
+    #def pre_save(self, form, request):
+        #form.instance.company = Company.objects.get(name='Bhaoo')
 
 class LibraryAdmin(BetterAppAdmin):
     app_name = 'library'

@@ -57,10 +57,3 @@ class MetaMixin(object):
         '''
         model = self.get_model()
         return model._meta.fields
-
-
-class HookedFieldMixin(object):
-    """
-    Enhances django form field classes with pre-rendering and pre-saving
-    hooks. To be used in unison with 
-    """
