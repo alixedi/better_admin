@@ -1,5 +1,5 @@
 from better_admin.views import BetterListView, BetterDetailView, \
-    BetterCreateView, BetterUpdateView, BetterDeleteView
+    BetterCreateView, BetterUpdateView, BetterDeleteView, BetterPopupView
 from better_admin.mixins import MetaMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
@@ -32,6 +32,7 @@ class BetterModelAdmin(MetaMixin):
     detail_view = None
     update_view = None
     delete_view = None
+    popup_view = None
 
     # So are these
     list_view_template = None
@@ -40,24 +41,23 @@ class BetterModelAdmin(MetaMixin):
     update_view_template = None
     delete_view_template = None
 
-    # The paramters coming below are essentially compromising the
-    # design pholosophy of better_admin - cascading. If I keep to
-    # principles, better_admin should only allow for override of
-    # the list_view for instance and not expose the various parameters
-    # configurable in list_view to ModelAdmin. The reason for this
-    # is to keep the interfaces clean and minimalistic.
-
-    # Optional hooks for form patterns
-    # These will be applied to create and update views
-    pre_render = None
-    pre_save = None
-
     # Optional actions
     actions = [export_csv_action,]
 
     # Optional override for filterest 
     filter_set = None
 
+    # Optional override of form classes
+    create_form = None
+    update_form = None
+
+    ######################
+    # To bo Deprecated! ##
+    ######################
+    # Optional hooks for form patterns
+    # These will be applied to create and update views
+    pre_render = None
+    pre_save = None
 
     def __init__(self):
         '''
@@ -81,6 +81,8 @@ class BetterModelAdmin(MetaMixin):
             self.update_view = self.update_view_factory()
         if self.delete_view is None:
             self.delete_view = self.delete_view_factory()
+        if self.popup_view is None:
+            self.popup_view = self.popup_view_factory()
 
     def get_queryset(self):
         '''
@@ -146,10 +148,25 @@ class BetterModelAdmin(MetaMixin):
                     dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('add', app=True),
                          template_name=self.get_template('create'),
+                         form_class=self.create_form,
                          pre_render=self.pre_render,
                          pre_save=self.pre_save,
                          success_url=reverse_lazy(self.get_view_name('list')),
                          success_message="%s was created successfully" % self.get_model_name()))
+
+    def popup_view_factory(self):
+        '''
+        Factory method for BetterCreateView that returns a sane default popup view.
+        '''
+        return type('PopupView',
+                    (BetterPopupView,),
+                    dict(queryset=self.get_queryset(),
+                         permission_required=self.get_permission('add', app=True),
+                         template_name='popup.html',
+                         form_class=self.create_form,
+                         pre_render=self.pre_render,
+                         pre_save=self.pre_save,
+                        ))
 
     def update_view_factory(self):
         '''
@@ -160,6 +177,7 @@ class BetterModelAdmin(MetaMixin):
                     dict(queryset=self.get_queryset(),
                          permission_required=self.get_permission('modify', app=True),
                          template_name=self.get_template('update'),
+                         form_class=self.update_form,
                          pre_render=self.pre_render,
                          pre_save=self.pre_save,
                          success_message="%s was updated successfully" % self.get_model_name()))
@@ -211,6 +229,10 @@ class BetterModelAdmin(MetaMixin):
             url(r'^%s/create$' % self.get_base_url(),
                 self.create_view.as_view(),
                 name=self.get_view_name('create')),
+
+            url(r'^%s/popup$' % self.get_base_url(),
+                self.popup_view.as_view(),
+                name=self.get_view_name('popup')),
 
             url(r'^%s/(?P<pk>\d+)/$' % self.get_base_url(),
                 self.detail_view.as_view(),

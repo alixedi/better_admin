@@ -62,6 +62,17 @@ def fklink(field, obj, autoescape=None):
 
 
 @register.filter
+def get_fk_popup_url(field):
+	'''
+	Returns url of the popup form for the model of the 
+	given foreign-key field
+	'''
+	model = field.field.queryset.model
+	model_name = model._meta.verbose_name_plural.lower()
+	app_name = model._meta.app_label.lower()
+	return '%s/%s/popup' % (app_name, model_name)
+
+@register.filter
 def get_fk_field_model_name(field):
 	'''
 	Returns model of the given foreign-key field

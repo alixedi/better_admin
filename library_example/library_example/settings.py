@@ -134,9 +134,9 @@ INSTALLED_APPS = (
     'better_admin',
     'bootstrap_toolkit',
     'widget_tweaks',
-    'userena',
-    'guardian',
-    'easy_thumbnails',
+    #'userena',
+    #'guardian',
+    #'easy_thumbnails',
     'django_filters',
     'braces',
     'django_nav',
@@ -145,7 +145,7 @@ INSTALLED_APPS = (
     'sorting',
     'tekextensions',
 
-    'accounts',
+    #'accounts',
     'library',
 
     # Uncomment the next line to enable the admin:
@@ -184,6 +184,7 @@ LOGGING = {
 }
 
 # userena settings
+"""
 AUTHENTICATION_BACKENDS = (
     'userena.backends.UserenaAuthenticationBackend',
     'guardian.backends.ObjectPermissionBackend',
@@ -202,7 +203,7 @@ THUMBNAIL_ALIASES = {
         'avatar': {'size': (50, 50), 'crop': True},
     },
 }
-
+"""
 # settings for django debug toolbar
 INTERNAL_IPS = ('127.0.0.1',)
 

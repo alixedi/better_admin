@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, \
     UpdateView, DeleteView
 from better_admin.viewmixins import BetterListFilteredMixin, \
-    SuccessMessageMixin, DetailRedirectMixin, HookedFormMixin
+    SuccessMessageMixin, DetailRedirectMixin, HookedFormMixin, PopupMixin
 from better_admin.mixins import MetaMixin
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from django_actions.views import ActionViewMixin
@@ -89,6 +89,14 @@ class BetterCreateView(LoginRequiredMixin,
     '''
     pass
 
+
+class BetterPopupView(LoginRequiredMixin,
+                       PermissionRequiredMixin,
+                       SuccessMessageMixin,
+                       MetaMixin,
+                       PopupMixin,
+                       CreateView):
+    pass
 
 class BetterUpdateView(LoginRequiredMixin,
                        PermissionRequiredMixin,

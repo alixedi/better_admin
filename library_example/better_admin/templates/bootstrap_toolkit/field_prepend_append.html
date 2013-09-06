@@ -18,7 +18,7 @@
     {% else %}
         {% with field_type=field|get_form_field_type %}
         {% if field_type == 'ModelChoiceField' or field_type == 'ModelMultipleChoiceField' %}
-        {{ field }} <a href="/add/{{ field|get_fk_field_model_name }}/" class="add-another" id="add_id_{{ field.name }}" onclick="return showAddAnotherPopup(this);">+</a>
+        {{ field }} <a href="../../{{ field|get_fk_popup_url }}" class="add-another" id="add_id_{{ field.name }}" onclick="return showAddAnotherPopup(this);">+</a>
         {% else %}
         {{ field }}
         {% endif %}

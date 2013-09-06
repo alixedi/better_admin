@@ -2,6 +2,9 @@ from django_filters.filterset import filterset_factory
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponse
+from django.utils.html import escape
+from django.contrib.auth.models import User
 
 
 # This is not mine. It belongs to django-enhanced-cbvs here:
@@ -84,6 +87,9 @@ class DetailRedirectMixin(object):
         return reverse_lazy(self.get_view_name('detail'), args=(obj.pk,))
 
 
+######################
+# To be Deprecated! ##
+######################
 class HookedFormMixin(object):
     """
     To be used with CBVs derived from FormView. Provides pre-rendering and
@@ -103,6 +109,29 @@ class HookedFormMixin(object):
             self.pre_save(form, self.request)
         return super(HookedFormMixin, self).form_valid(form)
 
+
+
+class PopupMixin(object):
+
+    pre_render = None
+    pre_save = None
+
+    def get_form(self, form_class):
+        form = form_class(**self.get_form_kwargs())
+        if not self.pre_render == None:
+            self.pre_render(form, self.request)
+        return form
+
+
+    def form_valid(self, form):
+        if not self.pre_save == None:
+            self.pre_save(form, self.request)
+        new_obj = form.save()
+        return HttpResponse("""
+            <script type="text/javascript">
+                opener.dismissAddAnotherPopup(window, "%s", "%s");
+                $('.selectpicker').selectpicker('render');
+            </script>""" % (escape(new_obj._get_pk_val()), escape(new_obj)))
 
 # Backported from Django 1.6
 # https://github.com/django/django/blob/master/django/contrib/messages/views.py
