@@ -23,26 +23,32 @@ urlpatterns = patterns('',
 
     url(r'^accounts/password/change/$',
        auth_views.password_change,
+       {'template_name': 'accounts/password_change_form.html'},
        name='auth_password_change'),
 
     url(r'^accounts/password/change/done/$',
        auth_views.password_change_done,
+       {'template_name': 'accounts/password_change_done.html'},
        name='auth_password_change_done'),
 
     url(r'^accounts/password/reset/$',
        auth_views.password_reset,
+       {'template_name': 'accounts/password_reset_form.html'},
        name='auth_password_reset'),
 
     url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
        auth_views.password_reset_confirm,
+       {'template_name': 'accounts/password_reset_confirm.html'},
        name='auth_password_reset_confirm'),
 
     url(r'^accounts/password/reset/complete/$',
        auth_views.password_reset_complete,
+       {'template_name': 'accounts/password_reset_complete.html'},
        name='auth_password_reset_complete'),
 
     url(r'^accounts/password/reset/done/$',
        auth_views.password_reset_done,
+       {'template_name': 'accounts/password_change_done.html'},
        name='auth_password_reset_done'),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -93,9 +99,19 @@ class TariffModelAdmin(BetterModelAdmin):
     #def pre_save(self, form, request):
         #form.instance.company = Company.objects.get(name='Bhaoo')
 
+class KAMAdmin(BetterModelAdmin):
+    queryset = KAM.objects.all()
+
+    def pre_render(self, form, request):
+        del form.fields['user']
+
+    def pre_save(self, form, request):
+        form.instance.user = request.user
+
 class LibraryAdmin(BetterAppAdmin):
     app_name = 'library'
-    model_admins = {'Tariff': TariffModelAdmin()}
+    model_admins = {'Tariff': TariffModelAdmin(),
+                    'KAM': KAMAdmin()}
 
 library_admin = LibraryAdmin()
 urlpatterns += library_admin.get_urls()
