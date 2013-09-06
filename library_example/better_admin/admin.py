@@ -221,12 +221,14 @@ class BetterModelAdmin(MetaMixin):
         detail_view: /app_name/model_name_plural/pk
         update_view: /app_name/model_name_plural/pk/update
         delete_view: /app_name/model_name_plural/pk/delete
+
+        magic_view: /app_name/model_name_plural/pk/tariff
         '''
         return patterns(
 
             '%s.views' % self.get_app_name(),
 
-            url(r'^%s/create$' % self.get_base_url(),
+            url(r'^%s/create/' % self.get_base_url(),
                 self.create_view.as_view(),
                 name=self.get_view_name('create')),
 

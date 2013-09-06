@@ -75,7 +75,6 @@ class TariffForm(ModelForm):
 
     def save(self):
         instance = super(TariffForm, self).save(commit=False)
-        instance.company = Company.objects.get(name='Bhaoo')
         instance.save()
         return instance
 
@@ -87,14 +86,18 @@ class TariffForm(ModelForm):
 from better_admin.admin import BetterAppAdmin, BetterModelAdmin
 
 class TariffModelAdmin(BetterModelAdmin):
-    queryset = Tariff.objects.filter(company__name='Bhaoo')
-    filter_set = TariffFilterSet
-    create_form = TariffForm
-    update_form = TariffForm
+    queryset = Tariff.objects.all()
+    #filter_set = TariffFilterSet
+    #create_form = TariffForm
+    #update_form = TariffForm
 
-    #def pre_render(self, form, request):
-        #del form.fields['company']
-        #form.fields['kams'].queryset = KAM.objects.filter(permanent=True)
+    def pre_render(self, form, request):
+        for key in request.GET:
+            try:
+                form.fields[key].initial = request.GET[key]
+                form.fields[key].widget.attrs['disabled'] = 'disabled'
+            except KeyError:
+                pass
 
     #def pre_save(self, form, request):
         #form.instance.company = Company.objects.get(name='Bhaoo')
@@ -116,6 +119,16 @@ class LibraryAdmin(BetterAppAdmin):
 library_admin = LibraryAdmin()
 urlpatterns += library_admin.get_urls()
 nav_groups.register(library_admin.get_nav())
+
+
+
+
+
+
+
+
+
+
 
 
 from django.contrib.auth.models import User

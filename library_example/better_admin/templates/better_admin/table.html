@@ -25,7 +25,10 @@
             {% include 'better_admin/field.html' %}
             {% endif %}
             {% endfor %}
-            <td style="padding-left:20px"><a href="./{{ object.pk }}/"><i class="icon-play"></i></a></td>
+            <td style="padding-left:20px">
+                <a href="./{{ object.pk }}/"><i class="icon-play"></i></a>
+                <a href="../tariffs/?company={{ object.pk }}"><i class="icon-list"></i></a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>

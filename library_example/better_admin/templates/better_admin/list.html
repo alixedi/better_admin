@@ -17,7 +17,7 @@
             {% csrf_token %}
             <p>
                 {% include 'django_actions/actions_select.html' %}
-                <a class="btn btn-success pull-right" href="./create">Create</a>
+                <a class="btn btn-success pull-right" href="./create/?{{ request.GET.urlencode }}">Create</a>
             </p>
             {% if object_list %}
             {% include 'better_admin/table.html' %}

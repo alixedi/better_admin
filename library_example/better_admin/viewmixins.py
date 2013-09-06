@@ -110,7 +110,6 @@ class HookedFormMixin(object):
         return super(HookedFormMixin, self).form_valid(form)
 
 
-
 class PopupMixin(object):
 
     pre_render = None
