@@ -1,10 +1,7 @@
-from django_filters.filterset import filterset_factory
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
-from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.utils.html import escape
-from django.contrib.auth.models import User
 
 
 # This is not mine. It belongs to django-enhanced-cbvs here:
@@ -59,38 +56,7 @@ class ListFilteredMixin(object):
         return super(ListFilteredMixin, self).get_context_data(**kwargs)
 
 
-class BetterListFilteredMixin(ListFilteredMixin):
-    '''
-    We are going to try and generate default FilterSet if none is specified
-    using the filter_set property instead of raising an ImproperlyConfigured
-    exception.
-
-    Details about ListFilteredMixin can be browsed in the code.
-    '''
-    def get_filter_set(self):
-        if self.filter_set:
-            return self.filter_set
-        else:
-            model = self.get_base_queryset().model
-            # django_filter has a filterset_factory
-            klass = filterset_factory(model)
-            return klass
-
-
-class DetailRedirectMixin(object):
-    """
-    To be used in CBVs derived from FormView. Provides get_success_url function
-    that redirects to DetailView.
-    """
-    def get_success_url(self):
-        obj = self.get_object()
-        return reverse_lazy(self.get_view_name('detail'), args=(obj.pk,))
-
-
-######################
-# To be Deprecated! ##
-######################
-class HookedFormMixin(object):
+class HookMixin(object):
     """
     To be used with CBVs derived from FormView. Provides pre-rendering and
     pre-saving hooks for inserting useful logic. 
@@ -107,11 +73,14 @@ class HookedFormMixin(object):
     def form_valid(self, form):
         if not self.pre_save == None:
             self.pre_save(form, self.request)
-        return super(HookedFormMixin, self).form_valid(form)
+        return super(HookMixin, self).form_valid(form)
 
 
 class PopupMixin(object):
-
+    """
+    To be used with PopupView. Provides pre-rendering and pre-saving hooks
+    for inserting useful logic a la HookMixin
+    """
     pre_render = None
     pre_save = None
 
@@ -131,6 +100,41 @@ class PopupMixin(object):
                 opener.dismissAddAnotherPopup(window, "%s", "%s");
                 $('.selectpicker').selectpicker('render');
             </script>""" % (escape(new_obj._get_pk_val()), escape(new_obj)))
+
+
+class BaseViewMixin(object):
+    """
+    Functions that answer common questions about model. 
+    """
+    def get_model_name(self):
+        '''
+        Returns name of the model - For use in templates
+        '''
+        meta = self.get_queryset().model._meta
+        return meta.object_name
+
+    def get_model_name_plural(self):
+        '''
+        Returns plural name of the model - For use in templates
+        '''
+        meta = self.get_queryset().model._meta
+        return meta.verbose_name_plural
+
+    def get_app_name(self):
+        '''
+        Reutrns the app name that the model for self.queryset
+        belongs to - For use in templates
+        '''
+        meta = self.get_queryset().model._meta
+        return meta.app_label
+
+    def get_model_fields(self):
+        '''
+        Returns the field names of model - For use in templates
+        '''
+        meta = self.get_queryset().model._meta
+        return meta.fields
+
 
 # Backported from Django 1.6
 # https://github.com/django/django/blob/master/django/contrib/messages/views.py

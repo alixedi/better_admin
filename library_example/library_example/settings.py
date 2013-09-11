@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'better_admin',
     'bootstrap_toolkit',
     'widget_tweaks',
+    'import_export',
     #'userena',
     #'guardian',
     #'easy_thumbnails',
@@ -143,7 +144,6 @@ INSTALLED_APPS = (
     'django_actions',
     'pagination',
     'sorting',
-    'tekextensions',
 
     #'accounts',
     'library',
@@ -216,5 +216,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request",
-    "tekextensions.context_processors.admin_media_prefix",
+    "better_admin.context_processors.admin_media_prefix",
 )

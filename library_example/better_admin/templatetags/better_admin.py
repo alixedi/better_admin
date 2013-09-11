@@ -68,7 +68,7 @@ def get_fk_popup_url(field):
 	given foreign-key field
 	'''
 	model = field.field.queryset.model
-	model_name = model._meta.verbose_name_plural.lower()
+	model_name = model._meta.object_name.lower()
 	app_name = model._meta.app_label.lower()
 	return '%s/%s/popup' % (app_name, model_name)
 
