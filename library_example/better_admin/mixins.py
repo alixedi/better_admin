@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import patterns, url
+from django.core.exceptions import ImproperlyConfigured
 
 from django_filters.filterset import filterset_factory
 
@@ -11,24 +12,13 @@ from better_admin.views import BetterListView, BetterDetailView, \
 class BetterListAdminMixin(object):
     """
     Creates and takes care of ListView
-    Requires the definition of get_queryset()
     """
 
-    list_queryset = None
     list_view = None
     list_perm = None
     list_template = None
     filter_set = None
     actions = None
-
-    def get_list_queryset(self):
-        """
-        Returns list queryset or default
-        """
-        if not self.list_queryset is None:
-            return self.list_queryset
-        else:
-            return self.get_queryset()
 
     def get_list_perm(self):
         """
@@ -37,7 +27,7 @@ class BetterListAdminMixin(object):
         if not self.list_perm is None:
             return self.list_perm
         else:
-            meta = self.get_list_queryset().model._meta
+            meta = self.get_model()._meta
             info = meta.app_label, meta.object_name
             return '%s.view_%s' % info
 
@@ -58,7 +48,7 @@ class BetterListAdminMixin(object):
             return self.filter_set
         else:
             # TODO: filterset factory
-            model = self.get_list_queryset().model
+            model = self.get_model()
             return filterset_factory(model)
 
     def get_actions(self):
@@ -78,9 +68,10 @@ class BetterListAdminMixin(object):
         if not self.list_view is None:
             return self.list_view
         else:
-            queryset = self.get_list_queryset()
-            meta = queryset.model._meta
-            name = '%sListView' % meta.object_name
+            model = self.get_model()
+            queryset = self.get_queryset()
+            request_queryset = self.get_request_queryset
+            name = '%sListView' % model._meta.object_name
             perm = self.get_list_perm()
             temp = self.get_list_template()
             filter_set = self.get_filter_set()
@@ -88,7 +79,9 @@ class BetterListAdminMixin(object):
 
             return type(name,
                         (BetterListView,),
-                        dict(queryset=queryset,
+                        dict(model=model,
+                             queryset=queryset,
+                             request_queryset = request_queryset,
                              permission_required=perm,
                              template_name=temp,
                              filter_set=filter_set,
@@ -98,7 +91,7 @@ class BetterListAdminMixin(object):
         """
         Returns URLs for list view
         """
-        meta = self.get_list_queryset().model._meta
+        meta = self.get_model()._meta
         info = meta.app_label.lower(), meta.object_name.lower()
         base_url = '%s/%s' % info
         view_name = '%s_%s_list' % info
@@ -116,19 +109,9 @@ class BetterDetailAdminMixin(object):
     Requires the definition of get_queryset()
     """
 
-    detail_queryset = None
     detail_view = None
     detail_perm = None
     detail_template = None
-
-    def get_detail_queryset(self):
-        """
-        Returns detail queryset or default
-        """
-        if not self.detail_queryset is None:
-            return self.detail_queryset
-        else:
-            return self.get_queryset()
 
     def get_detail_perm(self):
         """
@@ -137,7 +120,7 @@ class BetterDetailAdminMixin(object):
         if not self.detail_perm is None:
             return self.detail_perm
         else:
-            meta = self.get_detail_queryset().model._meta
+            meta = self.get_model()._meta
             info = meta.app_label, meta.object_name
             return '%s.view_%s' % info
 
@@ -157,15 +140,18 @@ class BetterDetailAdminMixin(object):
         if not self.detail_view is None:
             return self.detail_view
         else:
-            queryset = self.get_detail_queryset()
-            meta = queryset.model._meta
-            name = '%sDetailView' % meta.object_name
+            model = self.get_model()
+            queryset = self.get_queryset()
+            request_queryset = self.get_request_queryset
+            name = '%sDetailView' % model._meta.object_name
             perm = self.get_detail_perm()
             temp = self.get_detail_template()
 
             return type(name,
                         (BetterDetailView,),
-                        dict(queryset=queryset,
+                        dict(model=model,
+                             queryset=queryset,
+                             request_queryset=request_queryset,
                              permission_required=perm,
                              template_name=temp))
 
@@ -173,7 +159,7 @@ class BetterDetailAdminMixin(object):
         """
         Returns URLs for detail view
         """
-        meta = self.get_detail_queryset().model._meta
+        meta = self.get_model()._meta
         info = meta.app_label.lower(), meta.object_name.lower()
         base_url = '%s/%s' % info
         view_name = '%s_%s_detail' % info
@@ -256,6 +242,22 @@ class BetterCreateAdminMixin(object):
             meta = self.get_create_queryset().model._meta
             return '%s was created successfully' % meta.object_name 
 
+    def create_pre_render(self, form, request):
+        """
+        This function will be passed to the CreateView and will be executed
+        just before the form is rendered. You may over-ride this and code
+        useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
+    def create_pre_save(self, form, request):
+        """
+        This function will be passed to the CreateView and will be executed
+        after validation and just before the form is saved. You may over-ride
+        this and code useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
     def get_create_view(self):
         """
         Returns a create view 
@@ -263,9 +265,10 @@ class BetterCreateAdminMixin(object):
         if not self.create_view is None:
             return self.create_view
         else:
-            queryset = self.get_create_queryset()
-            meta = queryset.model._meta
-            name = '%sCreateView' % meta.object_name
+            model = self.get_model()
+            queryset = self.get_queryset()
+            request_queryset = self.get_request_queryset
+            name = '%sCreateView' % model._meta.object_name
             perm = self.get_create_perm()
             temp = self.get_create_template()
             form = self.get_create_form()
@@ -275,11 +278,14 @@ class BetterCreateAdminMixin(object):
             return type(name,
                         (BetterCreateView,),
                         dict(queryset=queryset,
+                             request_queryset=request_queryset,
                              permission_required=perm,
                              template_name=temp,
                              form_class=form,
                              success_url=suc_url,
-                             success_message=suc_msg))
+                             success_message=suc_msg,
+                             pre_render=self.create_pre_render,
+                             pre_save=self.create_pre_save))
 
     def get_create_urls(self):
         """
@@ -298,6 +304,10 @@ class BetterCreateAdminMixin(object):
 
 
 class BetterPopupAdminMixin(object):
+    """
+    Creates and takes care of a PopupView
+    Requires the definition of get_queryset()
+    """
 
     popup_queryset = None
     popup_view = None
@@ -344,6 +354,22 @@ class BetterPopupAdminMixin(object):
             # TODO: Intelligent Form Factory?
             return None
 
+    def popup_pre_render(self, form, request):
+        """
+        This function will be passed to the PopupView and will be executed
+        just before the form is rendered. You may over-ride this and code
+        useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
+    def popup_pre_save(self, form, request):
+        """
+        This function will be passed to the PopupView and will be executed
+        after validation and just before the form is saved. You may over-ride
+        this and code useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
     def get_popup_view(self):
         """
         Returns a popup view 
@@ -351,9 +377,10 @@ class BetterPopupAdminMixin(object):
         if not self.popup_view is None:
             return self.popup_view
         else:
-            queryset = self.get_popup_queryset()
-            meta = queryset.model._meta
-            name = '%sPopupView' % meta.object_name
+            model = self.get_model()
+            queryset = self.get_queryset()
+            request_queryset = self.get_request_queryset
+            name = '%sPopupView' % model._meta.object_name
             perm = self.get_popup_perm()
             temp = self.get_popup_template()
             form = self.get_popup_form()
@@ -361,9 +388,12 @@ class BetterPopupAdminMixin(object):
             return type(name,
                         (BetterPopupView,),
                         dict(queryset=queryset,
+                             request_queryset=request_queryset,
                              permission_required=perm,
                              template_name=temp,
-                             form_class=form))
+                             form_class=form,
+                             pre_render=self.popup_pre_render,
+                             pre_save=self.popup_pre_save))
 
     def get_popup_urls(self):
         """
@@ -382,6 +412,10 @@ class BetterPopupAdminMixin(object):
 
 
 class BetterUpdateAdminMixin(object):
+    """
+    Creates and takes care of a UpdateView
+    Requires the definition of get_queryset()
+    """
 
     update_queryset = None
     update_view = None
@@ -452,6 +486,22 @@ class BetterUpdateAdminMixin(object):
             meta = self.get_update_queryset().model._meta
             return '%s was updated successfully' % meta.object_name 
 
+    def update_pre_render(self, form, request):
+        """
+        This function will be passed to the UpdateView and will be executed
+        just before the form is rendered. You may over-ride this and code
+        useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
+    def update_pre_save(self, form, request):
+        """
+        This function will be passed to the UpdateView and will be executed
+        after validation and just before the form is saved. You may over-ride
+        this and code useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
     def get_update_view(self):
         """
         Returns a update view 
@@ -459,9 +509,10 @@ class BetterUpdateAdminMixin(object):
         if not self.update_view is None:
             return self.update_view
         else:
-            queryset = self.get_update_queryset()
-            meta = queryset.model._meta
-            name = '%sUpdateView' % meta.object_name
+            model = self.get_model()
+            queryset = self.get_queryset()
+            request_queryset = self.get_request_queryset
+            name = '%sUpdateView' % model._meta.object_name
             perm = self.get_update_perm()
             temp = self.get_create_template()
             form = self.get_create_form()
@@ -471,11 +522,14 @@ class BetterUpdateAdminMixin(object):
             return type(name,
                         (BetterUpdateView,),
                         dict(queryset=queryset,
+                             request_queryset=request_queryset,
                              permission_required=perm,
                              template_name=temp,
                              form_class=form,
                              success_url=suc_url,
-                             success_message=suc_msg))
+                             success_message=suc_msg,
+                             pre_render=self.update_pre_render,
+                             pre_save=self.update_pre_save))
 
     def get_update_urls(self):
         """
@@ -494,6 +548,10 @@ class BetterUpdateAdminMixin(object):
 
 
 class BetterDeleteAdminMixin(object):
+    """
+    Creates and takes care of a DeleteView
+    Requires the definition of get_queryset()
+    """
 
     delete_queryset = None
     delete_view = None
@@ -527,7 +585,7 @@ class BetterDeleteAdminMixin(object):
         if not self.delete_template is None:
             return self.delete_template
         else:
-            return 'better_admin/create.html'
+            return 'better_admin/delete.html'
 
     def get_delete_form(self):
         """
@@ -561,6 +619,22 @@ class BetterDeleteAdminMixin(object):
             meta = self.get_delete_queryset().model._meta
             return '%s was deleted successfully' % meta.object_name 
 
+    def delete_pre_render(self, form, request):
+        """
+        This function will be passed to the DeleteView and will be executed
+        just before the form is rendered. You may over-ride this and code
+        useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
+    def delete_pre_save(self, form, request):
+        """
+        This function will be passed to the DeleteView and will be executed
+        after validation and just before the form is saved. You may over-ride
+        this and code useful logic such as removing and/or pre-setting fields.
+        """
+        pass
+
     def get_delete_view(self):
         """
         Returns a delete view 
@@ -568,9 +642,10 @@ class BetterDeleteAdminMixin(object):
         if not self.delete_view is None:
             return self.delete_view
         else:
-            queryset = self.get_delete_queryset()
-            meta = queryset.model._meta
-            name = '%sDeleteView' % meta.object_name
+            model = self.get_model()
+            queryset = self.get_queryset()
+            request_queryset = self.get_request_queryset
+            name = '%sDeleteView' % model._meta.object_name
             perm = self.get_delete_perm()
             temp = self.get_delete_template()
             form = self.get_delete_form()
@@ -580,11 +655,14 @@ class BetterDeleteAdminMixin(object):
             return type(name,
                         (BetterDeleteView,),
                         dict(queryset=queryset,
+                             request_queryset=request_queryset,
                              permission_required=perm,
                              template_name=temp,
                              form_class=form,
                              success_url=suc_url,
-                             success_message=suc_msg))
+                             success_message=suc_msg,
+                             pre_render=self.delete_pre_render,
+                             pre_save=self.delete_pre_save))
 
     def get_delete_urls(self):
         """
@@ -602,8 +680,62 @@ class BetterDeleteAdminMixin(object):
                             name=view_name))
 
 
+class BetterModelAdminMixin(object):
+    """
+    Generic functions that are required by Better<view_type>AdminMixins
+    to work.
+    """
+
+    model = None
+    queryset = None
+
+    def get_model(self):
+        """
+        Returns self.model, self.queryset.model or raises an exception.
+        """
+        if not self.model is None:
+            return self.model
+        else:
+            if not self.queryset is None:
+                return self.queryset.model
+            else:
+                raise ImproperlyConfigured(("BetterModelAdmin requires a "
+                                            "definition of model or queryset "
+                                            "property."))
+
+    def get_queryset(self):
+        """
+        This method is passed to the respective View where it is plugged into
+        the get_queryset method. You can over-ride this to put in logic that
+        generates the queryset dynamically based on request. For instance, 
+        only showing contacts that are friends with request.user
+        By default, it returns self.queryset, self.model.objects.all() or 
+        raises an exception.
+        """
+        if not self.queryset is None:
+            return self.queryset
+        else:
+            if not self.model is None:
+                return self.model.objects.all()
+            else:
+                raise ImproperlyConfigured(("BetterModelAdmin requires a "
+                                            "definition of model or queryset "
+                                            "property."))
+
+    def get_request_queryset(self, request):
+        """
+        This method is passed to the respective View where it is plugged into
+        the get_queryset method. You can over-ride this to put in logic that
+        generates the queryset dynamically based on request. For instance, 
+        only showing contacts that are friends with request.user
+        """
+        return self.get_queryset()
+
+
+
 class ReadOnlyModelAdminMixin(BetterListAdminMixin,
-                              BetterDetailAdminMixin):
+                              BetterDetailAdminMixin,
+                              BetterModelAdminMixin):
     """
     Read-only support. Does not support editing.
     """
@@ -613,7 +745,8 @@ class ReadOnlyModelAdminMixin(BetterListAdminMixin,
 class CreateOnlyModelAdminMixin(BetterListAdminMixin,
                                 BetterDetailAdminMixin,
                                 BetterCreateAdminMixin,
-                                BetterPopupAdminMixin):
+                                BetterPopupAdminMixin,
+                                BetterModelAdminMixin):
     """
     Create-onle support. Does not include editing or deleting.
     """
@@ -623,7 +756,8 @@ class CreateOnlyModelAdminMixin(BetterListAdminMixin,
 class CreateAndUpdateModelAdminMixin(BetterListAdminMixin,
                                      BetterDetailAdminMixin,
                                      BetterCreateAdminMixin,
-                                     BetterPopupAdminMixin):
+                                     BetterPopupAdminMixin,
+                                     BetterModelAdminMixin):
     """
     Create-onle support. Does not include editing or deleting.
     """
@@ -635,7 +769,8 @@ class BetterModelAdminMixin(BetterListAdminMixin,
                             BetterCreateAdminMixin,
                             BetterUpdateAdminMixin,
                             BetterDeleteAdminMixin,
-                            BetterPopupAdminMixin):
+                            BetterPopupAdminMixin,
+                            BetterModelAdminMixin):
     """
     Complete CRUD support.
     """

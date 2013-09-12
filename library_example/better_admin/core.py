@@ -13,9 +13,6 @@ class BetterModelAdmin(BetterModelAdminMixin):
     givem model.
     """
 
-    # This is where you define your queryset if it is static
-    queryset = None
-
     def __init__(self):
         """
         Run the factories.
@@ -33,28 +30,16 @@ class BetterModelAdmin(BetterModelAdminMixin):
         if self.popup_view is None:
             self.popup_view = self.get_popup_view()
 
-    def get_queryset(self):
-        """
-        Returns self.queryset and if it is None, raises an ImproperlyConfigured
-        exception. No need for this extra protection at the moment, but I am
-        including this in view of any future modifications.
-        """
-        if self.queryset is None:
-            raise ImproperlyConfigured(("BetterModelAdmin requires a "
-                                        "definition of queryset property "
-                                        "in order to work."))
-        return self.queryset
-
     def get_nav(self):
         """
         Returns subclass of NavOption that points to the ListView of the model.
         """
-        meta = self.get_delete_queryset().model._meta
+        meta = self.get_model()._meta
         info = meta.app_label.lower(), meta.object_name.lower()
         view_name = '%s_%s_list' % info
         return type('%sNavOption' % meta.object_name,
                     (NavOption,),
-                    dict(name=meta.object_name,
+                    dict(name=meta.verbose_name_plural.title(),
                          view=view_name))
 
     def get_urls(self):
@@ -63,7 +48,7 @@ class BetterModelAdmin(BetterModelAdminMixin):
         TODO: Use super call to get all urls compiled. Will have to rename
         get_<view_type>_urls to get_urls in all the mixins.
         """
-        meta = self.get_queryset().model._meta
+        meta = self.get_model()._meta
         urls = patterns('%s.views' % meta.app_label)
         urls += self.get_list_urls()
         urls += self.get_detail_urls()
@@ -87,14 +72,21 @@ class BetterAppAdmin(object):
     # This is necessary
     app_name = None
 
-    # This is where we dump all the objects
-    model_admins = {}
+    # TODO: This does not work! model_admins becomes a class-level property 
+    # and carries the value of the last instantiated object forward. This is
+    # not a bug but a documented feature of Python - for immutable types.
+    # See here: http://docs.python.org/tutorial/classes.html
+    # model_admins = {}
+
+    model_admins = None
 
     def __init__(self):
         """
         Check for correct definition of app_name. Generate CRUD views for
         all the models in the app.
         """
+        if self.model_admins is None:
+            self.model_admins = {}
         app_name = self.get_app_name()
         app = get_app(app_name)
         for model in get_models(app):

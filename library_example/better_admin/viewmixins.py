@@ -65,12 +65,18 @@ class HookMixin(object):
     pre_save = None
 
     def get_form(self, form_class):
+        """
+        Plug-in the pre_render hook.
+        """
         form = form_class(**self.get_form_kwargs())
         if not self.pre_render == None:
             self.pre_render(form, self.request)
         return form
 
     def form_valid(self, form):
+        """
+        Plug-in the pre_save hook.
+        """
         if not self.pre_save == None:
             self.pre_save(form, self.request)
         return super(HookMixin, self).form_valid(form)
@@ -85,6 +91,9 @@ class PopupMixin(object):
     pre_save = None
 
     def get_form(self, form_class):
+        """
+        Plug-in the pre_render hook.
+        """
         form = form_class(**self.get_form_kwargs())
         if not self.pre_render == None:
             self.pre_render(form, self.request)
@@ -92,6 +101,10 @@ class PopupMixin(object):
 
 
     def form_valid(self, form):
+        """
+        Plug-in the pre_render hook plus the special popup response
+        that closes the popup.
+        """
         if not self.pre_save == None:
             self.pre_save(form, self.request)
         new_obj = form.save()
@@ -104,7 +117,28 @@ class PopupMixin(object):
 
 class BaseViewMixin(object):
     """
-    Functions that answer common questions about model. 
+    Functions that are a part of every view. At the moment, this include
+    over-riding the get_queryset function to include the request_queryset
+    hook.
+    """
+
+    request_queryset = None
+
+    def get_base_queryset(self):
+        if not self.request_queryset is None:
+            queryset = self.request_queryset(self.request)
+            return queryset._clone
+        else:
+            return super(BaseViewMixin, self).get_queryset()
+
+
+class TemplateUtilsMixin(object):
+    """
+    Functions that answer common questions about model. These questions are
+    generally asked by the templates and since the view instance is a part
+    of the context that is passed to the template, this is a nice place to
+    put these functions. Alternative included template_tags but they seem
+    an unnecessary complication at the moment. 
     """
     def get_model_name(self):
         '''

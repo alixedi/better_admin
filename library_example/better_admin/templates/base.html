@@ -47,7 +47,7 @@
 		<div class="container">
       {% include "nav.html" %}
       <div class="page-header">
-          <h1>{{ view.get_model_name_plural }}</h1>
+          <h1>{{ view.get_model_name_plural|title }}</h1>
       </div>
 		  {% block content %}
 		  {% endblock %}

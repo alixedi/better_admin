@@ -8,7 +8,7 @@ from better_admin.core import BetterAppAdmin, BetterModelAdmin
 
 
 class UserModelAdmin(BetterModelAdmin):
-    queryset = User.objects.all()
+    model = User
 
     def pre_save(self, form, request):
         form.instance.password = hashlib.md5(form.instance.password).hexdigest()
@@ -69,3 +69,9 @@ class AuthAppAdmin(BetterAppAdmin):
         )
 
         return urls
+
+
+def enable_auth(urlpatterns, nav_groups):
+    auth_app_admin = AuthAppAdmin()
+    urlpatterns += auth_app_admin.get_urls()
+    nav_groups.register(auth_app_admin.get_nav())

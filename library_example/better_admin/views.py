@@ -2,7 +2,8 @@ from django.views.generic import ListView, DetailView, CreateView, \
                                  UpdateView, DeleteView
 
 from better_admin.viewmixins import ListFilteredMixin, SuccessMessageMixin, \
-                                    HookMixin, PopupMixin, BaseViewMixin
+                                    HookMixin, PopupMixin, BaseViewMixin, \
+                                    TemplateUtilsMixin
 
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 
@@ -13,6 +14,7 @@ class BetterListView(LoginRequiredMixin,
                      PermissionRequiredMixin,
                      ListFilteredMixin,
                      ActionViewMixin,
+                     TemplateUtilsMixin,
                      BaseViewMixin,
                      ListView):
     """
@@ -42,6 +44,7 @@ class BetterListView(LoginRequiredMixin,
 
 class BetterDetailView(LoginRequiredMixin,
                        PermissionRequiredMixin,
+                       TemplateUtilsMixin,
                        BaseViewMixin,
                        DetailView):
     """
@@ -71,6 +74,7 @@ class BetterCreateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        SuccessMessageMixin,
                        HookMixin,
+                       TemplateUtilsMixin,
                        BaseViewMixin,
                        CreateView):
     """
@@ -100,6 +104,7 @@ class BetterPopupView(LoginRequiredMixin,
                       PermissionRequiredMixin,
                       SuccessMessageMixin,
                       PopupMixin,
+                      TemplateUtilsMixin,
                       BaseViewMixin,
                       CreateView):
     """
@@ -128,6 +133,7 @@ class BetterUpdateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        SuccessMessageMixin,
                        HookMixin,
+                       TemplateUtilsMixin,
                        BaseViewMixin,
                        UpdateView):
     """
@@ -156,6 +162,8 @@ class BetterUpdateView(LoginRequiredMixin,
 class BetterDeleteView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        SuccessMessageMixin,
+                       HookMixin,
+                       TemplateUtilsMixin,
                        BaseViewMixin,
                        DeleteView):
     """
