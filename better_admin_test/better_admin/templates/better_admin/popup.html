@@ -1,0 +1,27 @@
+{% load bootstrap_toolkit %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8">
+	    <title>Create {{ view.get_model_name }}</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+		<link href="{{ STATIC_URL }}better_admin/css/bootstrap.css" rel="stylesheet">
+		<link href="{{ STATIC_URL }}better_admin/css/bootstrap-select.css" rel="stylesheet">
+		<script src="{{ ADMIN_MEDIA_PREFIX }}js/admin/RelatedObjectLookups.js"></script>
+	</head>
+	<body>
+		<form class="form-horizontal" method="POST" action="{{ request.get_full_path }}" enctype="multipart/form-data">
+			{% csrf_token %}
+		    <fieldset>
+		        <legend>Create {{ view.get_model_name }}</legend>
+		        {{ form|as_bootstrap }}
+		    </fieldset>
+		    <div class="form-actions">
+		        <input type="submit" class="btn btn-primary" value="Submit" />
+		        <a onclick="javascript:window.close()">Cancel</a>
+		    </div>
+		</form>
+	</body>
+</html>

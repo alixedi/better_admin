@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>BitsLink</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="{{ STATIC_URL }}better_admin/css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}better_admin/css/bootstrap-responsive.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 80px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .row-large {
+        margin: 50px 0;
+      }
+      .row-large-centered {
+        margin: 50px 0;
+        text-align: center;
+      }
+      .pagination {
+        text-align: center;
+      }
+    </style>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../web/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ STATIC_URL }}better_admin/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}better_admin/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}better_admin/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}better_admin/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="{{ STATIC_URL }}better_admin/ico/favicon.png">
+  </head>
+
+  <body>
+		<div class="container">
+      {% include "nav.html" %}
+      <div class="page-header">
+          <h1>{{ view.get_model_name_plural|title }}</h1>
+      </div>
+		  {% block content %}
+		  {% endblock %}
+		</div>
+    <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/jquery.js"></script>
+    <script src="{{ STATIC_URL }}better_admin/js/jquery.expander.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/bootstrap.js"></script>
+    <script src="{{ ADMIN_MEDIA_PREFIX }}js/admin/RelatedObjectLookups.js"></script>
+    <script>
+      // When the user clicks the checkbox in table head, select all checkboxes in table body
+      $(function () {
+        $(".table thead tr th.select input:checkbox").click( function () {
+          $(this).closest('table').find(':checkbox').prop('checked', this.checked);
+        });
+      });
+
+      // load the expander library that will convert large text in tables to teasers
+      $(function () {
+        $('.expandable').expander({
+          slicePoint:25, // default is 100
+          expandPrefix:'...', // default is '... '
+          expandText:'more', // default is 'read more'
+          userCollapseText:'less'  // default is 'read less'
+        });
+      });
+    </script>
+  </body>
+</html>

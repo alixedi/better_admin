@@ -1,0 +1,30 @@
+{% extends 'better_admin/base_better_admin.html' %}
+{% load bootstrap_toolkit widget_tweaks %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span2">
+        <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
+            {% for field in filter.form %}
+            <p>{% render_field field placeholder=field.label class+="span12" %}</p>
+            {% endfor %}
+            <button type="submit" class="btn btn-warning pull-right">Filter</button>
+        </form>
+    </div>
+    <div class="span10">
+        {% bootstrap_messages %}
+        <form action="" method="post" id="id_action_posts" class="form-inline">
+            {% csrf_token %}
+            <p>
+                {% include 'django_actions/actions_select.html' %}
+                <a class="btn btn-success pull-right" href="./create/?{{ request.GET.urlencode }}">Create</a>
+            </p>
+            {% if object_list %}
+            {% include 'better_admin/table.html' %}
+            {% else %}
+                Empty
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

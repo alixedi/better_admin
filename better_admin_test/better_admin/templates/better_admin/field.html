@@ -1,0 +1,52 @@
+{% load better_admin humanize %}
+
+{% with field_type=field|get_field_type field_value=object|get_field_value:field.name %}
+
+{% if field_type == 'EmailField' or field_type == 'URLField' %}
+<td>{{ field_value|urlize }}</td>
+
+{% elif field_type == 'IPAddressField' or field_type == 'GenericIPAddressField' %}
+<td><a href="http://{{ field_value }}">{{ field_value }}</a></td>
+
+{% elif field_type == 'FileField' %}
+<td style="padding-left:20px"><a href="{{ MEDIA_URL}}{{ field_value }}"><i class="icon-file"></i></a></td>
+
+{% elif field_type == 'ForeignKey' or field_type == 'OneToOneField' %}
+<td>{{ field|fklink:object }}</td>
+
+{% elif field_type == 'CommaSeparatedIntegerField' %}
+<td>{{ field_value|tagify }}</td>
+
+{% elif field_type == 'ImageField' %}
+<td><img src="{{ MEDIA_URL }}{{ field_value }}" width=50 alt="" /></td>
+
+{% elif field_type == 'BooleanField' or field_type == 'NullBooleanField' %}
+<td style="padding-left:20px"><i {% if 'True' == 'True' %}class="icon-ok"{% elif field_value == 'False' %}class="icon-remove"{% else %}class="icon-question"{% endif %}></i>
+</td>
+
+{% elif field_type == 'SmallIntegerField' or field_type == 'IntegerField' or field_type == 'BigIntegerField' or field_type == 'PositiveIntegerField' or field_type == 'PositiveSmallIntegerField' %}
+<!-- TODO: Identify situations where we ought to use intword-->
+<td style="text-align:right">{{ field_value|intcomma }}</td>
+
+{% elif field_type == 'FloatField' or field_type == 'DecimalField' %}
+<td style="text-align:right">{{ field_value|floatformat:-3 }}</td>
+
+{% elif field_type == 'TextField' %}
+<td><span class="expandable">{{ field_value }}</span></td>
+
+<!-- TODO: Can we make the date/time fields time-zone-aware? -->
+<!-- TODO: Identify situations where we ought to use naturalday and naturaltime-->
+{% elif field_type == 'DateTimeField' %}
+<td>{{ field_value|date:'d/m/y Hi' }}</td>
+{% elif field_type == 'DateField' %}
+<td>{{ field_value|date:'d/m/y' }}</td>
+{% elif field_type == 'TimeField' %}
+<td>{{ field_value|date:'Hi' }}</td>
+
+
+
+{% else %}
+<td>{{ field_value }}</td>
+{% endif %}
+
+{% endwith %}
