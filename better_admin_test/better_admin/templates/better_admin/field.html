@@ -12,10 +12,7 @@
 <td style="padding-left:20px"><a href="{{ MEDIA_URL}}{{ field_value }}"><i class="icon-file"></i></a></td>
 
 {% elif field_type == 'ForeignKey' or field_type == 'OneToOneField' %}
-<td>{{ field|fklink:object }}</td>
-
-{% elif field_type == 'CommaSeparatedIntegerField' %}
-<td>{{ field_value|tagify }}</td>
+<td>{{ field|get_fk_link:object }}</td>
 
 {% elif field_type == 'ImageField' %}
 <td><img src="{{ MEDIA_URL }}{{ field_value }}" width=50 alt="" /></td>

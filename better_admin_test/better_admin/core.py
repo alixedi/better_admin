@@ -29,6 +29,8 @@ class BetterModelAdmin(BetterModelAdminMixin):
             self.delete_view = self.get_delete_view()
         if self.popup_view is None:
             self.popup_view = self.get_popup_view()
+        if self.export_resource is None:
+            self.export_resource = self.get_export_resource()
 
     def get_nav(self):
         """
@@ -52,6 +54,8 @@ class BetterModelAdmin(BetterModelAdminMixin):
         urls = patterns('%s.views' % meta.app_label)
         urls += self.get_create_urls()
         urls += self.get_popup_urls()
+        urls += self.get_export_urls()
+        urls += self.get_import_urls()
         urls += self.get_update_urls()
         urls += self.get_delete_urls()
         urls += self.get_detail_urls()
