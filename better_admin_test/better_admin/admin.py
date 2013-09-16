@@ -11,7 +11,22 @@ class UserModelAdmin(BetterModelAdmin):
     model = User
 
     def pre_save(self, form, request):
+        """
+        Generic pre_save.
+        """
         form.instance.password = hashlib.md5(form.instance.password).hexdigest()
+
+    def create_pre_save(self, form, request):
+        """
+        Create pre_save to be hooked into CreateView
+        """
+        self.pre_save(form, request)
+
+    def update_pre_save(self, form, request):
+        """
+        Update pre_save to be hooked into UpdateView
+        """
+        self.pre_save(form, request)
 
 
 class AuthAppAdmin(BetterAppAdmin):

@@ -16,7 +16,6 @@ urlpatterns = patterns('') + \
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-"""
 from better_admin_test_app.models import KAM
 from better_admin.core import BetterModelAdmin
 
@@ -24,16 +23,17 @@ class BetterKAMModelAdmin(BetterModelAdmin):
 	model = KAM
 
 	def get_request_queryset(self, request):
-		return KAM.objects.filter(permanent=False)
+		return KAM.objects.filter(user=request.user)
 
 class BetterAdminTestAppAdmin(BetterAppAdmin):
     app_name = 'better_admin_test_app'
     model_admins = {'KAM': BetterKAMModelAdmin()}
-"""
 
+"""
 class BetterAdminTestAppAdmin(BetterAppAdmin):
     app_name = 'better_admin_test_app'
-    
+"""
+
 better_admin_test_app_admin = BetterAdminTestAppAdmin()
 urlpatterns += better_admin_test_app_admin.get_urls()
 nav_groups.register(better_admin_test_app_admin.get_nav())
