@@ -64,6 +64,17 @@ class HookMixin(object):
     pre_render = None
     pre_save = None
 
+    def init_form_from_get(self, form):
+        """
+        Init form from the parameters in GET querystring.
+        """
+        for key in self.request.GET:
+            try:
+                form.fields[key].initial = self.request.GET[key]
+                form.fields[key].widget.attrs['disabled'] = 'disabled'
+            except KeyError:
+                pass
+
     def get_form(self, form_class):
         """
         Plug-in the pre_render hook.
@@ -71,6 +82,7 @@ class HookMixin(object):
         form = form_class(**self.get_form_kwargs())
         if not self.pre_render == None:
             self.pre_render(form, self.request)
+        self.init_form_from_get(form)
         return form
 
     def form_valid(self, form):
@@ -90,6 +102,17 @@ class PopupMixin(object):
     pre_render = None
     pre_save = None
 
+    def init_form_from_get(self, form):
+        """
+        Init form from the parameters in GET querystring.
+        """
+        for key in self.request.GET:
+            try:
+                form.fields[key].initial = self.request.GET[key]
+                form.fields[key].widget.attrs['disabled'] = 'disabled'
+            except KeyError:
+                pass
+
     def get_form(self, form_class):
         """
         Plug-in the pre_render hook.
@@ -97,6 +120,7 @@ class PopupMixin(object):
         form = form_class(**self.get_form_kwargs())
         if not self.pre_render == None:
             self.pre_render(form, self.request)
+        self.init_form_from_get(form)
         return form
 
 
