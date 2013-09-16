@@ -29,6 +29,8 @@ class BetterModelAdmin(BetterModelAdminMixin):
             self.delete_view = self.get_delete_view()
         if self.popup_view is None:
             self.popup_view = self.get_popup_view()
+        if self.import_resource is None:
+            self.import_resource = self.get_import_resource()
         if self.export_resource is None:
             self.export_resource = self.get_export_resource()
 

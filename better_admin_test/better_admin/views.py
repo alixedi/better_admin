@@ -12,10 +12,10 @@ from django_actions.views import ActionViewMixin
 
 class BetterListView(LoginRequiredMixin,
                      PermissionRequiredMixin,
-                     ListFilteredMixin,
-                     ActionViewMixin,
                      TemplateUtilsMixin,
+                     ActionViewMixin,
                      BaseViewMixin,
+                     ListFilteredMixin,
                      ListView):
     """
     A class-based generic list-view that requires the user to log-in, checks

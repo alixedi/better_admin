@@ -126,8 +126,7 @@ class BaseViewMixin(object):
 
     def get_base_queryset(self):
         if not self.request_queryset is None:
-            queryset = self.request_queryset(self.request)
-            return queryset._clone
+            return self.request_queryset(self.request)
         else:
             return super(BaseViewMixin, self).get_queryset()
 

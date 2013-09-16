@@ -888,7 +888,7 @@ class BetterExportAdminMixin(object):
         return TemplateResponse(request, [self.export_template_name], context)
 
 
-class BetterModelAdminMixin(object):
+class BetterModelAdminBaseMixin(object):
     """
     Generic functions that are required by Better<view_type>AdminMixins
     to work.
@@ -942,7 +942,7 @@ class BetterModelAdminMixin(object):
 
 class ReadOnlyModelAdminMixin(BetterListAdminMixin,
                               BetterDetailAdminMixin,
-                              BetterModelAdminMixin):
+                              BetterModelAdminBaseMixin):
     """
     Read-only support. Does not support editing.
     """
@@ -953,7 +953,7 @@ class CreateOnlyModelAdminMixin(BetterListAdminMixin,
                                 BetterDetailAdminMixin,
                                 BetterCreateAdminMixin,
                                 BetterPopupAdminMixin,
-                                BetterModelAdminMixin):
+                                BetterModelAdminBaseMixin):
     """
     Create-onle support. Does not include editing or deleting.
     """
@@ -964,7 +964,7 @@ class CreateAndUpdateModelAdminMixin(BetterListAdminMixin,
                                      BetterDetailAdminMixin,
                                      BetterCreateAdminMixin,
                                      BetterPopupAdminMixin,
-                                     BetterModelAdminMixin):
+                                     BetterModelAdminBaseMixin):
     """
     Create-onle support. Does not include editing or deleting.
     """
@@ -979,7 +979,7 @@ class BetterModelAdminMixin(BetterListAdminMixin,
                             BetterPopupAdminMixin,
                             BetterExportAdminMixin,
                             BetterImportAdminMixin,
-                            BetterModelAdminMixin):
+                            BetterModelAdminBaseMixin):
     """
     Complete CRUD support.
     """
