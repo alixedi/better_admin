@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, \
                                  UpdateView, DeleteView
 
-from better_admin.viewmixins import ListFilteredMixin, SuccessMessageMixin, \
+from better_admin.viewmixins import ListFilteredMixin, BetterSuccessMessageMixin, \
                                     HookMixin, PopupMixin, BaseViewMixin, \
                                     TemplateUtilsMixin
 
@@ -72,7 +72,7 @@ class BetterDetailView(LoginRequiredMixin,
 
 class BetterCreateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
-                       SuccessMessageMixin,
+                       BetterSuccessMessageMixin,
                        HookMixin,
                        TemplateUtilsMixin,
                        BaseViewMixin,
@@ -102,7 +102,7 @@ class BetterCreateView(LoginRequiredMixin,
 
 class BetterPopupView(LoginRequiredMixin,
                       PermissionRequiredMixin,
-                      SuccessMessageMixin,
+                      BetterSuccessMessageMixin,
                       PopupMixin,
                       TemplateUtilsMixin,
                       BaseViewMixin,
@@ -131,7 +131,7 @@ class BetterPopupView(LoginRequiredMixin,
 
 class BetterUpdateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
-                       SuccessMessageMixin,
+                       BetterSuccessMessageMixin,
                        HookMixin,
                        TemplateUtilsMixin,
                        BaseViewMixin,
@@ -161,7 +161,7 @@ class BetterUpdateView(LoginRequiredMixin,
 
 class BetterDeleteView(LoginRequiredMixin,
                        PermissionRequiredMixin,
-                       SuccessMessageMixin,
+                       BetterSuccessMessageMixin,
                        HookMixin,
                        TemplateUtilsMixin,
                        BaseViewMixin,

@@ -71,7 +71,7 @@ class HookMixin(object):
         for key in self.request.GET:
             try:
                 form.fields[key].initial = self.request.GET[key]
-                form.fields[key].widget.attrs['disabled'] = 'disabled'
+                #form.fields[key].widget.attrs['disabled'] = 'disabled'
             except KeyError:
                 pass
 
@@ -149,6 +149,11 @@ class BaseViewMixin(object):
     request_queryset = None
 
     def get_base_queryset(self):
+        """
+        This overrides the function by the same name present in 
+        ListFilteredMixin. It hooks up the get_request_queryset
+        method the is passed in from the admin.
+        """
         if not self.request_queryset is None:
             return self.request_queryset(self.request)
         else:
@@ -210,3 +215,17 @@ class SuccessMessageMixin(object):
 
     def get_success_message(self, cleaned_data):
         return self.success_message % cleaned_data
+
+class BetterSuccessMessageMixin(SuccessMessageMixin):
+    """
+    Overrides the get_success_url method in order to preserve querystring
+    on post-success redirects.
+    """
+
+    def get_success_url(self):
+        """
+        If request has a querystring, append it to the success_url.
+        """
+        url = super(BetterSuccessMessageMixin, self).get_success_url()
+        q = '&'.join(['%s=%s' % q for q in self.request.GET.iteritems()])
+        return url + '?' + q

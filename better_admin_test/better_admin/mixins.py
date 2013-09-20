@@ -3,7 +3,6 @@ from django.conf.urls import patterns, url
 from django.core.exceptions import ImproperlyConfigured
 
 from django_filters.filterset import filterset_factory
-from import_export.admin import ImportExportMixin
 from import_export.resources import modelresource_factory
 
 from better_admin.views import BetterListView, BetterDetailView, \
