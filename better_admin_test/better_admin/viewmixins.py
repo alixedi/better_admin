@@ -157,7 +157,7 @@ class BaseViewMixin(object):
         if not self.request_queryset is None:
             return self.request_queryset(self.request)
         else:
-            return super(BaseViewMixin, self).get_queryset()
+            return super(BaseViewMixin, self).get_base_queryset()
 
 
 class TemplateUtilsMixin(object):

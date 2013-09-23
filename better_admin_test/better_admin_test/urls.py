@@ -18,9 +18,11 @@ urlpatterns = patterns('') + \
 
 from better_admin_test_app.models import KAM
 from better_admin.core import BetterModelAdmin
+from better_admin_test_app.views import KAMBetterListView
 
 class BetterKAMModelAdmin(BetterModelAdmin):
 	model = KAM
+	list_view = KAMBetterListView
 
 	def get_request_queryset(self, request):
 		return KAM.objects.filter(user=request.user)
