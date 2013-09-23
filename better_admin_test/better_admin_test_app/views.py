@@ -10,3 +10,6 @@ class KAMBetterListView(BetterListView):
 	permission_required = 'better_admin_test_app.view_kam'
 	template_name = 'better_admin/list.html'
 	filter_set = filterset_factory(KAM)
+
+	def get_request_queryset(self, request):
+		return self.model.queryset.all()
