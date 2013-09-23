@@ -46,7 +46,7 @@ def get_fk_link(field, obj, autoescape=None):
     view_name = '%s_%s_%s' % (app_name, model_name, 'detail')
     field_value = getattr(obj, field.name, None)
     try:
-        href = reverse(view_name, args=(obj.pk,))
+        href = reverse(view_name, args=(field_value.pk,))
         return mark_safe("<a href='%s'>%s</a>" % (href, field_value))
     except:
         return mark_safe("%s" % field_value)
