@@ -5,7 +5,8 @@ from better_admin.viewmixins import ListFilteredMixin, BetterSuccessMessageMixin
                                     HookMixin, PopupMixin, BaseViewMixin, \
                                     TemplateUtilsMixin
 
-from braces.views import LoginRequiredMixin, PermissionRequiredMixin
+from braces.views import LoginRequiredMixin, PermissionRequiredMixin, \
+                         StaffuserRequiredMixin, SuperuserRequiredMixin
 
 from django_actions.views import ActionViewMixin
 
@@ -42,6 +43,32 @@ class BetterListView(LoginRequiredMixin,
     pass
 
 
+class BetterStaffuserListView(LoginRequiredMixin,
+                              StaffuserRequiredMixin,
+                              TemplateUtilsMixin,
+                              ActionViewMixin,
+                              BaseViewMixin,
+                              ListFilteredMixin,
+                              ListView):
+    """
+    Staff-only version of BetterListView
+    """
+    pass
+
+
+class BetterSuperuserListView(LoginRequiredMixin,
+                              SuperuserRequiredMixin,
+                              TemplateUtilsMixin,
+                              ActionViewMixin,
+                              BaseViewMixin,
+                              ListFilteredMixin,
+                              ListView):
+    """
+    Superuser-only version of BetterListView
+    """
+    pass
+
+
 class BetterDetailView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        TemplateUtilsMixin,
@@ -66,6 +93,28 @@ class BetterDetailView(LoginRequiredMixin,
         model = MyModel
     # urls.py
     url(r'mymodel_detail/', views.MyDetailView.as_view())
+    """
+    pass
+
+
+class BetterStaffuserDetailView(LoginRequiredMixin,
+                                StaffuserRequiredMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                DetailView):
+    """
+    Staff-only DetailView
+    """
+    pass
+
+
+class BetterSuperuserDetailView(LoginRequiredMixin,
+                                SuperuserRequiredMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                DetailView):
+    """
+    Superuser-only DetailView
     """
     pass
 
@@ -100,6 +149,32 @@ class BetterCreateView(LoginRequiredMixin,
     pass
 
 
+class BetterStaffuserCreateView(LoginRequiredMixin,
+                                StaffuserRequiredMixin,
+                                BetterSuccessMessageMixin,
+                                HookMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                CreateView):
+    """
+    Staff-only CreateView
+    """
+    pass
+
+
+class BetterSuperuserCreateView(LoginRequiredMixin,
+                                SuperuserRequiredMixin,
+                                BetterSuccessMessageMixin,
+                                HookMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                CreateView):
+    """
+    Superuser-only CreateView
+    """
+    pass
+
+
 class BetterPopupView(LoginRequiredMixin,
                       PermissionRequiredMixin,
                       BetterSuccessMessageMixin,
@@ -128,6 +203,33 @@ class BetterPopupView(LoginRequiredMixin,
     url(r'mymodel_create/', views.MyCreateView.as_view())
     """
     pass
+
+
+class BetterStaffuserPopupView(LoginRequiredMixin,
+                               StaffuserRequiredMixin,
+                               BetterSuccessMessageMixin,
+                               PopupMixin,
+                               TemplateUtilsMixin,
+                               BaseViewMixin,
+                               CreateView):
+    """
+    Staff-only PopupView
+    """
+    pass
+
+
+class BetterSuperuserPopupView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               BetterSuccessMessageMixin,
+                               PopupMixin,
+                               TemplateUtilsMixin,
+                               BaseViewMixin,
+                               CreateView):
+    """
+    Superuser-only PopupView
+    """
+    pass
+
 
 class BetterUpdateView(LoginRequiredMixin,
                        PermissionRequiredMixin,
@@ -159,6 +261,32 @@ class BetterUpdateView(LoginRequiredMixin,
     pass
 
 
+class BetterStaffuserUpdateView(LoginRequiredMixin,
+                                StaffuserRequiredMixin,
+                                BetterSuccessMessageMixin,
+                                HookMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                UpdateView):
+    """
+    Staff-only UpdateView
+    """
+    pass
+
+
+class BetterSuperuserUpdateView(LoginRequiredMixin,
+                                SuperuserRequiredMixin,
+                                BetterSuccessMessageMixin,
+                                HookMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                UpdateView):
+    """
+    Superuser-only UpdateView
+    """
+    pass
+
+
 class BetterDeleteView(LoginRequiredMixin,
                        PermissionRequiredMixin,
                        BetterSuccessMessageMixin,
@@ -185,5 +313,31 @@ class BetterDeleteView(LoginRequiredMixin,
         model = MyModel
     # urls.py
     url(r'mymodel_delete/', views.MyDeleteView.as_view())
+    """
+    pass
+
+
+class BetterStaffuserDeleteView(LoginRequiredMixin,
+                                StaffuserRequiredMixin,
+                                BetterSuccessMessageMixin,
+                                HookMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                DeleteView):
+    """
+    Staff-only DeleteView
+    """
+    pass
+
+
+class BetterSuperuserDeleteView(LoginRequiredMixin,
+                                SuperuserRequiredMixin,
+                                BetterSuccessMessageMixin,
+                                HookMixin,
+                                TemplateUtilsMixin,
+                                BaseViewMixin,
+                                DeleteView):
+    """
+    Superuser-only DeleteView
     """
     pass

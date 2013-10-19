@@ -1,13 +1,31 @@
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import patterns, url
-from django.core.exceptions import ImproperlyConfigured
 
 from django_filters.filterset import filterset_factory
-from import_export.resources import modelresource_factory
 
-from better_admin.views import BetterListView, BetterDetailView, \
-                               BetterCreateView, BetterUpdateView, \
-                               BetterDeleteView, BetterPopupView
+from better_admin.views import BetterListView, \
+                               BetterSuperuserListView, \
+                               BetterStaffuserListView
+
+from better_admin.views import BetterDetailView, \
+                               BetterSuperuserDetailView, \
+                               BetterStaffuserDetailView
+
+from better_admin.views import BetterCreateView, \
+                               BetterSuperuserCreateView, \
+                               BetterStaffuserCreateView
+
+from better_admin.views import BetterUpdateView, \
+                               BetterSuperuserUpdateView, \
+                               BetterStaffuserUpdateView
+
+from better_admin.views import BetterDeleteView, \
+                               BetterSuperuserDeleteView, \
+                               BetterStaffuserDeleteView
+
+from better_admin.views import BetterPopupView, \
+                               BetterSuperuserPopupView, \
+                               BetterStaffuserPopupView                                
 
 
 class BetterListAdminMixin(object):
@@ -16,10 +34,13 @@ class BetterListAdminMixin(object):
     """
 
     list_view = None
-    list_perm = None
     list_template = None
     filter_set = None
     actions = None
+    # permission related properties
+    list_perm = None
+    list_superuser_reqd = None
+    list_staffuser_reqd = None
 
     def get_list_perm(self):
         """
@@ -62,6 +83,19 @@ class BetterListAdminMixin(object):
             # TODO: actions factory
             return []
 
+    def get_listview_klass(self):
+        """
+        Returns the ListView class to be used
+        """
+        superuser = self.list_superuser_reqd
+        staffuser = self.list_staffuser_reqd
+        if not superuser is None and superuser is True:
+            return BetterSuperuserListView
+        if not staffuser is None and staffuser is True:
+            return BetterStaffuserListView
+        else:
+            return BetterListView
+
     def get_list_view(self):
         """
         Returns a list view 
@@ -77,9 +111,10 @@ class BetterListAdminMixin(object):
             temp = self.get_list_template()
             filter_set = self.get_filter_set()
             actions = self.get_actions()
+            klass = self.get_listview_klass()
 
             return type(name,
-                        (BetterListView,),
+                        (klass,),
                         dict(model=model,
                              queryset=queryset,
                              request_queryset = request_queryset,
@@ -111,8 +146,11 @@ class BetterDetailAdminMixin(object):
     """
 
     detail_view = None
-    detail_perm = None
     detail_template = None
+    # permission related properties
+    detail_perm = None
+    detail_superuser_reqd = None
+    detail_staffuser_reqd = None
 
     def get_detail_perm(self):
         """
@@ -134,6 +172,19 @@ class BetterDetailAdminMixin(object):
         else:
             return 'better_admin/detail.html'
 
+    def get_detailview_klass(self):
+        """
+        Returns the DetailView class to be used
+        """
+        superuser = self.detail_superuser_reqd
+        staffuser = self.detail_staffuser_reqd
+        if not superuser is None and superuser is True:
+            return BetterSuperuserDetailView
+        if not staffuser is None and staffuser is True:
+            return BetterStaffuserDetailView
+        else:
+            return BetterDetailView
+
     def get_detail_view(self):
         """
         Returns a detail view 
@@ -147,9 +198,10 @@ class BetterDetailAdminMixin(object):
             name = '%sDetailView' % model._meta.object_name
             perm = self.get_detail_perm()
             temp = self.get_detail_template()
+            klass = self.get_detailview_klass()
 
             return type(name,
-                        (BetterDetailView,),
+                        (klass,),
                         dict(model=model,
                              queryset=queryset,
                              request_queryset=request_queryset,
@@ -178,11 +230,14 @@ class BetterCreateAdminMixin(object):
     Requires the definition of get_queryset()
     """
     create_view = None
-    create_perm = None
     create_form = None
     create_template = None
     create_success_url = None
     create_success_message = None
+    # permission related properties
+    create_perm = None
+    create_superuser_reqd = None
+    create_staffuser_reqd = None
 
     def get_create_perm(self):
         """
@@ -252,6 +307,19 @@ class BetterCreateAdminMixin(object):
         """
         pass
 
+    def get_createview_klass(self):
+        """
+        Returns the CreateView class to be used
+        """
+        superuser = self.create_superuser_reqd
+        staffuser = self.create_staffuser_reqd
+        if not superuser is None and superuser is True:
+            return BetterSuperuserCreateView
+        if not staffuser is None and staffuser is True:
+            return BetterStaffuserCreateView
+        else:
+            return BetterCreateView
+
     def get_create_view(self):
         """
         Returns a create view 
@@ -268,9 +336,10 @@ class BetterCreateAdminMixin(object):
             form = self.get_create_form()
             suc_url = self.get_create_success_url()
             suc_msg = self.get_create_success_message()
+            klass = self.get_createview_klass()
 
             return type(name,
-                        (BetterCreateView,),
+                        (klass,),
                         dict(queryset=queryset,
                              request_queryset=request_queryset,
                              permission_required=perm,
@@ -303,9 +372,12 @@ class BetterPopupAdminMixin(object):
     Requires the definition of get_queryset()
     """
     popup_view = None
-    popup_perm = None
     popup_form = None
     popup_template = None
+    # permission related properties
+    popup_perm = None
+    popup_superuser_reqd = None
+    popup_staffuser_reqd = None
 
     def get_popup_perm(self):
         """
@@ -353,6 +425,19 @@ class BetterPopupAdminMixin(object):
         """
         pass
 
+    def get_popupview_klass(self):
+        """
+        Returns the PopupView class to be used
+        """
+        superuser = self.popup_superuser_reqd
+        staffuser = self.popup_staffuser_reqd
+        if not superuser is None and superuser is True:
+            return BetterSuperuserPopupView
+        if not staffuser is None and staffuser is True:
+            return BetterStaffuserPopupView
+        else:
+            return BetterPopupView
+
     def get_popup_view(self):
         """
         Returns a popup view 
@@ -367,9 +452,10 @@ class BetterPopupAdminMixin(object):
             perm = self.get_popup_perm()
             temp = self.get_popup_template()
             form = self.get_popup_form()
+            klass = self.get_popupview_klass()
 
             return type(name,
-                        (BetterPopupView,),
+                        (klass,),
                         dict(queryset=queryset,
                              request_queryset=request_queryset,
                              permission_required=perm,
@@ -400,11 +486,14 @@ class BetterUpdateAdminMixin(object):
     Requires the definition of get_queryset()
     """
     update_view = None
-    update_perm = None
     update_form = None
     update_template = None
     update_success_url = None
     update_success_message = None
+    # permission related properties
+    update_perm = None
+    update_superuser_reqd = None
+    update_staffuser_reqd = None
 
     def get_update_perm(self):
         """
@@ -474,6 +563,19 @@ class BetterUpdateAdminMixin(object):
         """
         pass
 
+    def get_updateview_klass(self):
+        """
+        Returns the UpdateView class to be used
+        """
+        superuser = self.update_superuser_reqd
+        staffuser = self.update_staffuser_reqd
+        if not superuser is None and superuser is True:
+            return BetterSuperuserUpdateView
+        if not staffuser is None and staffuser is True:
+            return BetterStaffuserUpdateView
+        else:
+            return BetterUpdateView
+
     def get_update_view(self):
         """
         Returns a update view 
@@ -490,9 +592,10 @@ class BetterUpdateAdminMixin(object):
             form = self.get_update_form()
             suc_url = self.get_update_success_url()
             suc_msg = self.get_create_success_message()
+            klass = self.get_updateview_klass()
 
             return type(name,
-                        (BetterUpdateView,),
+                        (klass,),
                         dict(queryset=queryset,
                              request_queryset=request_queryset,
                              permission_required=perm,
@@ -526,11 +629,14 @@ class BetterDeleteAdminMixin(object):
     """
 
     delete_view = None
-    delete_perm = None
     delete_form = None
     delete_template = None
     delete_success_url = None
     delete_success_message = None
+    # permission related properties
+    delete_perm = None
+    delete_superuser_reqd = None
+    delete_staffuser_reqd = None
 
     def get_delete_perm(self):
         """
@@ -600,6 +706,19 @@ class BetterDeleteAdminMixin(object):
         """
         pass
 
+    def get_deleteview_klass(self):
+        """
+        Returns the DeleteView class to be used
+        """
+        superuser = self.delete_superuser_reqd
+        staffuser = self.delete_staffuser_reqd
+        if not superuser is None and superuser is True:
+            return BetterSuperuserDeleteView
+        if not staffuser is None and staffuser is True:
+            return BetterStaffuserDeleteView
+        else:
+            return BetterDeleteView
+
     def get_delete_view(self):
         """
         Returns a delete view 
@@ -616,9 +735,10 @@ class BetterDeleteAdminMixin(object):
             form = self.get_delete_form()
             suc_url = self.get_delete_success_url()
             suc_msg = self.get_delete_success_message()
+            klass = self.get_deleteview_klass()
 
             return type(name,
-                        (BetterDeleteView,),
+                        (klass,),
                         dict(queryset=queryset,
                              request_queryset=request_queryset,
                              permission_required=perm,
@@ -643,343 +763,3 @@ class BetterDeleteAdminMixin(object):
                         url(r'^%s/(?P<pk>[a-zA-Z0-9_]+)/delete/$' % base_url,
                             delete_view.as_view(),
                             name=view_name))
-
-
-import tempfile
-from datetime import datetime
-
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template.response import TemplateResponse
-from django.core.urlresolvers import reverse
-from django.contrib import messages
-
-from import_export.forms import ExportForm, ConfirmImportForm, ImportForm
-from import_export.formats import base_formats
-
-#: import / export formats
-DEFAULT_FORMATS = (
-    base_formats.CSV,
-    base_formats.XLS,
-    base_formats.TSV,
-    base_formats.ODS,
-    base_formats.JSON,
-    base_formats.YAML,
-    base_formats.HTML,
-)
-
-
-class BetterImportAdminMixin(object):
-    """
-    Create and takes care of ImportView for importing data using 
-    django-import-export.
-    """
-
-    #: template for import view
-    import_template_name = 'import_export/import.html'
-    #: resource class
-    import_resource = None
-    #: available import formats
-    formats = DEFAULT_FORMATS
-    #: import data encoding
-    from_encoding = "utf-8"
-
-    def get_import_resource(self):
-        """
-        Returns self.import_resource or default
-        """
-        if not self.import_resource is None:
-            return self.import_resource
-        else:
-            model = self.get_model()
-            return modelresource_factory(model)
-
-    def get_import_urls(self):
-        """
-        Returns import urls.
-        """
-        meta = self.get_model()._meta
-        info = meta.app_label, meta.module_name
-        base_url = '%s/%s' % info
-        view_name = '%s_%s_delete' % info
-
-        return patterns('%s.views' % meta.app_label,
-                        url(r'^%s/process_import/$' % base_url,
-                            self.process_import,
-                            name=view_name),
-                        url(r'^%s/import/$' % base_url,
-                            self.import_action,
-                            name=view_name))
-
-    def get_import_formats(self):
-        """
-        Returns available import formats.
-        """
-        return [f for f in self.formats if f().can_import()]
-
-    def process_import(self, request, *args, **kwargs):
-        '''
-        Perform the actuall import action (after the user has confirmed he
-        wishes to import)
-        '''
-        opts = self.get_model()._meta
-        resource = self.get_import_resource()()
-
-        confirm_form = ConfirmImportForm(request.POST)
-        if confirm_form.is_valid():
-            import_formats = self.get_import_formats()
-            input_format = import_formats[
-                int(confirm_form.cleaned_data['input_format'])
-            ]()
-            import_file = open(confirm_form.cleaned_data['import_file_name'],
-                               input_format.get_read_mode())
-            data = import_file.read()
-            if not input_format.is_binary() and self.from_encoding:
-                data = unicode(data, self.from_encoding).encode('utf-8')
-            dataset = input_format.create_dataset(data)
-
-            resource.import_data(dataset, dry_run=False,
-                                 raise_errors=True)
-
-            success_message = 'Import finished'
-            messages.success(request, success_message)
-            import_file.close()
-
-            url = reverse('%s_%s_list' %
-                          (opts.app_label.lower(), opts.object_name.lower()))
-            return HttpResponseRedirect(url)
-
-    def import_action(self, request, *args, **kwargs):
-        '''
-        Perform a dry_run of the import to make sure the import will not
-        result in errors.  If there where no error, save the the user
-        uploaded file to a local temp file that will be used by
-        'process_import' for the actual import.
-        '''
-        resource = self.get_import_resource()()
-
-        context = {}
-
-        import_formats = self.get_import_formats()
-        form = ImportForm(import_formats,
-                          request.POST or None,
-                          request.FILES or None)
-
-        if request.POST and form.is_valid():
-            input_format = import_formats[
-                int(form.cleaned_data['input_format'])
-            ]()
-            import_file = form.cleaned_data['import_file']
-            # first always write the uploaded file to disk as it may be a
-            # memory file or else based on settings upload handlers
-            with tempfile.NamedTemporaryFile(delete=False) as uploaded_file:
-                for chunk in import_file.chunks():
-                    uploaded_file.write(chunk)
-
-            # then read the file, using the proper format-specific mode
-            with open(uploaded_file.name,
-                      input_format.get_read_mode()) as uploaded_import_file:
-                # warning, big files may exceed memory
-                data = uploaded_import_file.read()
-                if not input_format.is_binary() and self.from_encoding:
-                    data = unicode(data, self.from_encoding).encode('utf-8')
-                dataset = input_format.create_dataset(data)
-                result = resource.import_data(dataset, dry_run=True,
-                                              raise_errors=False)
-
-            context['result'] = result
-
-            if not result.has_errors():
-                context['confirm_form'] = ConfirmImportForm(initial={
-                    'import_file_name': uploaded_file.name,
-                    'input_format': form.cleaned_data['input_format'],
-                })
-
-        context['form'] = form
-        context['opts'] = self.get_model()._meta
-        context['fields'] = [f.column_name for f in resource.get_fields()]
-
-        return TemplateResponse(request, [self.import_template_name], context)
-
-
-
-class BetterExportAdminMixin(object):
-    """
-    Create and takes care of ExportView for exporting data using 
-    django-import-export.
-    """
-    #: resource class
-    export_resource = None
-    #: template for export view
-    export_template_name = 'import_export/export.html'
-    #: available import formats
-    formats = DEFAULT_FORMATS
-    #: export data encoding
-    to_encoding = "utf-8"
-
-    def get_export_resource(self):
-        """
-        Returns self.export_resource or default
-        """
-        if not self.export_resource is None:
-            return self.export_resource
-        else:
-            model = self.get_model()
-            return modelresource_factory(model)
-
-    def get_export_urls(self):
-        """
-        Returns export urls.
-        """
-        meta = self.get_model()._meta
-        info = meta.app_label, meta.module_name
-        base_url = '%s/%s' % info
-        view_name = '%s_%s_delete' % info
-
-        return patterns('%s.views' % meta.app_label,
-                        url(r'^%s/export/$' % base_url,
-                            self.export_action,
-                            name=view_name))
-
-    def get_export_formats(self):
-        """
-        Returns available import formats.
-        """
-        return [f for f in self.formats if f().can_export()]
-
-    def get_export_filename(self, file_format):
-        """
-        Come up with a reasonable file name for the export
-        """
-        date_str = datetime.now().strftime('%Y-%m-%d')
-        filename = "%s-%s.%s" % (self.get_model().__name__,
-                                 date_str,
-                                 file_format.get_extension())
-        return filename
-
-    def export_action(self, request, *args, **kwargs):
-        """
-        The function based view that does the export. Copied from 
-        import_export/resouces.py - the original could not work 
-        because of references to admin.
-        """
-        formats = self.get_export_formats()
-        form = ExportForm(formats, request.POST or None)
-        if form.is_valid():
-            file_format = formats[
-                int(form.cleaned_data['file_format'])
-            ]()
-
-            resource_class = self.get_export_resource()
-            queryset = self.get_request_queryset(request)
-            data = resource_class().export(queryset)
-            response = HttpResponse(
-                file_format.export_data(data),
-                mimetype='application/octet-stream',
-            )
-            response['Content-Disposition'] = 'attachment; filename=%s' % (
-                self.get_export_filename(file_format),
-            )
-            return response
-
-        context = {}
-        context['form'] = form
-        context['opts'] = self.get_model()._meta
-        return TemplateResponse(request, [self.export_template_name], context)
-
-
-class BetterModelAdminBaseMixin(object):
-    """
-    Generic functions that are required by Better<view_type>AdminMixins
-    to work.
-    """
-
-    model = None
-    queryset = None
-
-    def get_model(self):
-        """
-        Returns self.model, self.queryset.model or raises an exception.
-        """
-        if not self.model is None:
-            return self.model
-        else:
-            if not self.queryset is None:
-                return self.queryset.model
-            else:
-                raise ImproperlyConfigured(("BetterModelAdmin requires a "
-                                            "definition of model or queryset "
-                                            "property."))
-
-    def get_queryset(self):
-        """
-        This method is passed to the respective View where it is plugged into
-        the get_queryset method. You can over-ride this to put in logic that
-        generates the queryset dynamically based on request. For instance, 
-        only showing contacts that are friends with request.user
-        By default, it returns self.queryset, self.model.objects.all() or 
-        raises an exception.
-        """
-        if not self.queryset is None:
-            return self.queryset
-        else:
-            if not self.model is None:
-                return self.model.objects.all()
-            else:
-                raise ImproperlyConfigured(("BetterModelAdmin requires a "
-                                            "definition of model or queryset "
-                                            "property."))
-
-    def get_request_queryset(self, request):
-        """
-        This method is passed to the respective View where it is plugged into
-        the get_queryset method. You can over-ride this to put in logic that
-        generates the queryset dynamically based on request. For instance, 
-        only showing contacts that are friends with request.user
-        """
-        return self.get_queryset()
-
-
-class ReadOnlyModelAdminMixin(BetterListAdminMixin,
-                              BetterDetailAdminMixin,
-                              BetterModelAdminBaseMixin):
-    """
-    Read-only support. Does not support editing.
-    """
-    pass
-
-
-class CreateOnlyModelAdminMixin(BetterListAdminMixin,
-                                BetterDetailAdminMixin,
-                                BetterCreateAdminMixin,
-                                BetterPopupAdminMixin,
-                                BetterModelAdminBaseMixin):
-    """
-    Create-onle support. Does not include editing or deleting.
-    """
-    pass
-
-
-class CreateAndUpdateModelAdminMixin(BetterListAdminMixin,
-                                     BetterDetailAdminMixin,
-                                     BetterCreateAdminMixin,
-                                     BetterPopupAdminMixin,
-                                     BetterModelAdminBaseMixin):
-    """
-    Create-onle support. Does not include editing or deleting.
-    """
-    pass
-
-
-class BetterModelAdminMixin(BetterListAdminMixin,
-                            BetterDetailAdminMixin,
-                            BetterCreateAdminMixin,
-                            BetterUpdateAdminMixin,
-                            BetterDeleteAdminMixin,
-                            BetterPopupAdminMixin,
-                            BetterExportAdminMixin,
-                            BetterImportAdminMixin,
-                            BetterModelAdminBaseMixin):
-    """
-    Complete CRUD support.
-    """
-    pass

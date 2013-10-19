@@ -4,7 +4,7 @@ from django.conf.urls import patterns
 
 from django_nav import Nav, NavOption
 
-from better_admin.mixins import BetterModelAdminMixin
+from better_admin.adminmixins import BetterModelAdminMixin
 
 
 class BetterModelAdmin(BetterModelAdminMixin):
