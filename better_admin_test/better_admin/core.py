@@ -85,6 +85,7 @@ class BetterAppAdmin(object):
     # model_admins = {}
 
     model_admins = None
+    exclude_model = None
 
     def __init__(self):
         """
@@ -93,11 +94,15 @@ class BetterAppAdmin(object):
         """
         if self.model_admins is None:
             self.model_admins = {}
+        if self.exclude_model is None:
+            self.exclude_model = []
         app_name = self.get_app_name()
         app = get_app(app_name)
         for model in get_models(app):
             model_name = model._meta.object_name
             if not model_name in self.model_admins:
+                if model_name in self.exclude_model:
+                    continue
                 self.model_admins[model_name] = self.get_model_admin(model)
 
     def get_app_name(self):
