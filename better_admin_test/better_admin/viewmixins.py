@@ -26,15 +26,9 @@ class ListFilteredMixin(object):
         """
         Returns the keyword arguments for instanciating the filterset.
         """
-        data = self.request.GET.dict()
-        qs = self.get_base_queryset()
-        for key, value in data.items():
-            if value.lower() == 'none':
-                data.pop(key)
-                qs = qs.filter(**{key: None})
         return {
-            'data': data,
-            'queryset': qs,
+            'data': self.request.GET,
+            'queryset': self.get_base_queryset(),
         }
 
     def get_base_queryset(self):
