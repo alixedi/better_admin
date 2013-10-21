@@ -6,7 +6,7 @@
     <div class="span2">
         <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
             {% for field in filter.form %}
-            <p>{{ field.label }}:<br>{% render_field field placeholder=object_list.0.name class+="span12" %}</p>
+            <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
             {% endfor %}
             <button type="submit" class="btn btn-warning pull-right">Filter</button>
         </form>

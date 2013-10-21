@@ -71,7 +71,12 @@ class BetterListAdminMixin(object):
         else:
             # TODO: filterset factory
             model = self.get_model()
-            return filterset_factory(model)
+            filterset = filterset_factory(model)
+            for field in filterset.base_filters.keys():
+                filterset.base_filters[field].lookup_type = 'icontains'
+                print field, 'icontained'
+            return filterset
+
 
     def get_actions(self):
         """
