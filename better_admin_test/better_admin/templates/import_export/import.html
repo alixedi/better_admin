@@ -1,111 +1,66 @@
 {% extends "import_export/base_import_export.html" %}
 {% load i18n %}
-{% load import_export_tags %}
+{% load import_export_tags bootstrap_toolkit %}
+
+{% block header %}
+<div class="page-header">
+    <h1>{{ opts.verbose_name_plural|title }}</h1>
+</div>
+{% endblock %}
 
 {% block content %}
-<h1>{% trans "Import" %}</h1>
-
+<div class="container-narrow">
 {% if confirm_form %}
-  <form action="../process_import/" method="POST">
+  <form class="form-horizontal" action="../process_import/" method="POST">
     {% csrf_token %}
-    {{ confirm_form.as_p }}
-    <p>
-      {% trans "Below is a preview of data to be imported. If you are satisfied with the results, click 'Confirm import'" %}
-    </p>
-    <div class="submit-row">
-      <input type="submit" class="default" name="confirm" value="{% trans "Confirm import" %}">
+    <fieldset>
+      <legend>Import {{ opts.verbose_name_plural|title }}</legend>
+      {{ confirm_form|as_bootstrap }}
+      <div class="alert alert-warning">
+        {% trans "Below is a preview of data to be imported. If you are satisfied with the results, click: <strong>Confirm</strong>" %}
+      </div>
+      {% include "import_export/results.html" %}
+    </fieldset>
+    <div class="form-actions">
+        <input type="submit" class="btn btn-primary" name="confirm" value="Confirm" />
+        <a href="../">Cancel</a>
     </div>
   </form>
 
 {% else %}
-  <form action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form" enctype="multipart/form-data">
+  <form class="form-horizontal" action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form" enctype="multipart/form-data">
     {% csrf_token %}
-
-    <p>
-      {% trans "This importer will import the following fields: " %}
-      {% for f in fields  %}
-        {% if forloop.counter0 %}
-        , 
-        {% endif %}
-        <tt>{{ f }}</tt>
-      {% endfor %}
-    </p>
-
-    <fieldset class="module aligned">
-      {% for field in form %}
-        <div class="form-row">
-          {{ field.errors }}
-
-          {{ field.label_tag }}
-
-          {{ field }}
-
-          {% if field.field.help_text %}
-          <p class="help">{{ field.field.help_text|safe }}</p>
-          {% endif %}
+    <fieldset>
+      <legend>Import {{ opts.verbose_name_plural|title }}</legend>
+        <div class="alert alert-info">
+          {% trans "This importer will import the following fields: " %}
+          {% for f in fields  %}
+            {% if forloop.counter0 %}
+            , 
+            {% endif %}
+            <tt><strong>{{ f }}</strong></tt>
+          {% endfor %}
         </div>
-      {% endfor %}
+        {{ form|as_bootstrap }}
     </fieldset>
-
-    <div class="submit-row">
-      <input type="submit" class="default" value="{% trans "Submit" %}">
+    <div class="form-actions">
+        <input type="submit" class="btn btn-primary" value="Submit" />
+        <a href="../">Cancel</a>
     </div>
   </form>
 {% endif %}
+</div>
+{% endblock %}
 
-{% if result %}
+{% block extra_style %}
+<link href="{{ STATIC_URL }}better_admin/css/jquery.dataTables.css" rel="stylesheet">
+{% endblock %}
 
-  {% if result.has_errors %}
-    <h2>{% trans "Errors" %}</h2>
-    <ul>
-      {% for error in result.base_errors  %}
-      <li>{{ error.error }}</li>
-      {% endfor %}
-      {% for line, errors in result.row_errors %}
-        {% for error in errors %}
-          <li>
-            {% trans "Line number" %}: {{ line }} - {{ error.error }}
-            <div class="traceback">{{ error.traceback|linebreaks }}</div>
-          </li>
-        {% endfor %}
-      {% endfor %}
-    </ul>
-  {% else %}
-
-  <h2>
-    {% trans "Preview" %}
-  </h2>
-  <table>
-    <thead>
-      <tr>
-        <th></th>
-        {% for field in fields %}
-          <th>{{ field }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    {% for row in result.rows %}
-    <tr>
-      <td>
-        {% if row.import_type == 'new' %}
-          {% trans "New" %}
-        {% elif row.import_type == 'skip' %}
-          {% trans "Skipped" %}
-        {% elif row.import_type == 'delete' %}
-          {% trans "Delete" %}
-        {% elif row.import_type == 'update' %}
-          {% trans "Update" %}
-        {% endif %}
-      </td>
-      {% for field in row.diff %}
-      <td>
-        {{ field }}
-      </td>
-      {% endfor %}
-    </etr>
-    {% endfor %}
-  </table>
-  {% endif %}
-
-  {% endif %}
+{% block extra_script %}
+<script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+  $(function () {
+    $("#results-table").dataTable();
+  });
+</script>
 {% endblock %}

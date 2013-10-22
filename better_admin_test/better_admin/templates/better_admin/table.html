@@ -2,7 +2,7 @@
 
 {% auto_sort object_list %}
 {% autopaginate object_list 10 %}
-<table class="table">
+<table class="table table-striped">
     {% for object in object_list %}
     {% if forloop.first %}
     <thead>
@@ -13,7 +13,7 @@
             <th>{% sort_link field.verbose_name|title field.name %}</th>
             {% endifnotequal %}
             {% endfor %}
-            <th>View</th>
+            <th>Detail</th>
         </tr>
     </thead>
     <tbody>
@@ -21,12 +21,12 @@
         <tr>
             <td><input type="checkbox" name="action-select" value="{{ object.pk }}"></td>
             {% for field in view.get_model_fields %}
-            {% if field|get_field_type != 'AutoField'  %}
+            {% if field|get_field_type != 'AutoField' %}
             {% include 'better_admin/field.html' %}
             {% endif %}
             {% endfor %}
             <td style="padding-left:20px">
-                <a href="./{{ object.pk }}/"><i class="icon-play"></i></a>
+                <a href="./{{ object.pk }}/?{{ request.GET.urlencode }}"><i class="icon-play"></i></a>
             </td>
         </tr>
     {% endfor %}

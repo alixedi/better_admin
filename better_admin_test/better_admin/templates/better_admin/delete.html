@@ -10,9 +10,12 @@
                 <p>Are you sure you want to delete this record?</p>
             </fieldset>
             <div class="form-actions">
-                <input type="submit" class="btn btn-primary" value="Delete" />
-                <a href="../">Cancel</a>
-            </div>         
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i></button>
+                    <a class="btn btn-danger" href="../"><i class="icon-remove icon-white"></i></a>
+                </div>
+            </div>
+
         </form>
     </div>
 {% endblock %}

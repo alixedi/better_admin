@@ -2,6 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 from django.http import HttpResponse
 from django.utils.html import escape
+from django.conf import settings
 
 
 # This is not mine. It belongs to django-enhanced-cbvs here:
@@ -168,32 +169,39 @@ class TemplateUtilsMixin(object):
     put these functions. Alternative included template_tags but they seem
     an unnecessary complication at the moment. 
     """
+    def get_project_name(self):
+        """
+        Returns name of the project
+        """
+        return getattr(settings, 'PROJECT_NAME', 
+            'Define PROJECT_NAME in settings.py')
+
     def get_model_name(self):
-        '''
+        """
         Returns name of the model - For use in templates
-        '''
+        """
         meta = self.get_queryset().model._meta
         return meta.object_name
 
     def get_model_name_plural(self):
-        '''
+        """
         Returns plural name of the model - For use in templates
-        '''
+        """
         meta = self.get_queryset().model._meta
         return meta.verbose_name_plural
 
     def get_app_name(self):
-        '''
+        """
         Reutrns the app name that the model for self.queryset
         belongs to - For use in templates
-        '''
+        """
         meta = self.get_queryset().model._meta
         return meta.app_label
 
     def get_model_fields(self):
-        '''
+        """
         Returns the field names of model - For use in templates
-        '''
+        """
         meta = self.get_queryset().model._meta
         return meta.fields
 

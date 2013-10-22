@@ -1,31 +1,26 @@
 {% extends "import_export/base_import_export.html" %}
 {% load i18n %}
-{% load import_export_tags %}
+{% load import_export_tags bootstrap_toolkit %}
+
+{% block header %}
+<div class="page-header">
+    <h1>{{ opts.verbose_name_plural|title }}</h1>
+</div>
+{% endblock %}
 
 {% block content %}
-<h1>{% trans "Export" %}</h1>
 
-<form action="" method="POST">
-  {% csrf_token %}
-
-    <fieldset class="module aligned">
-      {% for field in form %}
-        <div class="form-row">
-          {{ field.errors }}
-
-          {{ field.label_tag }}
-
-          {{ field }}
-
-          {% if field.field.help_text %}
-          <p class="help">{{ field.field.help_text|safe }}</p>
-          {% endif %}
-        </div>
-      {% endfor %}
-    </fieldset>
-
-    <div class="submit-row">
-      <input type="submit" class="default" value="{% trans "Submit" %}">
-    </div>
-</form>
+<div class="container-narrow">
+  <form class="form-horizontal" action="" method="POST">
+    {% csrf_token %}
+      <fieldset>
+        <legend>Export {{ opts.verbose_name_plural|title }}</legend>
+        {{ form|as_bootstrap }}
+      </fieldset>
+      <div class="form-actions">
+          <input type="submit" class="btn btn-primary" value="Submit" />
+          <a href="../">Cancel</a>
+      </div>
+  </form>
+</div>
 {% endblock %}

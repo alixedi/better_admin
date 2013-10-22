@@ -2,16 +2,21 @@
 {% load better_admin %}
 
 {% block content %}
-    <div class="container-narrow">
-        <legend>{{ object }}</legend>
-        <dl class="dl-horizontal">
+    <div class="container-narrower">
+        <legend>
+            {{ object }} Details
+            <div class="btn-group pull-right">
+                <a class="btn btn-warning" href="./update/?{{ request.GET.urlencode }}"><i class="icon-edit icon-white"></i></a>
+                <a class="btn btn-danger" href="./delete/?{{ request.GET.urlencode }}"><i class="icon-trash icon-white"></i></a>
+                <a class="btn btn-success" href="../?{{ request.GET.urlencode }}"><i class="icon-list icon-white"></i></a>
+            </div>
+        </legend>
+        <table class="table table-striped">
             {% for field in view.get_model_fields %}
-                <dt>{{ field.verbose_name|title }}</dt><dd>{{ object|get_field_value:field.name }}</dd>
+            <tr>
+                <td><strong>{{ field.verbose_name|title }}</strong></td><td>{% include "better_admin/field.html" %}</td>
+            </tr>
             {% endfor %}
-        </dl>
-        <div class="form-actions">
-            <a class="btn btn-primary" href="./update">Update</a>
-            <a class="btn btn-danger" href="./delete">Delete</a>
-        </div>         
+        </table>
     </div>
 {% endblock %}

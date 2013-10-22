@@ -5,20 +5,33 @@
 <div class="row-fluid">
     <div class="span2">
         <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
-            {% for field in filter.form %}
-            <p>{% render_field field placeholder=field.label class+="span12" %}</p>
-            {% endfor %}
-            <button type="submit" class="btn btn-warning pull-right">Filter</button>
+            <fieldset>
+                {% for field in filter.form %}
+                    <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
+                {% endfor %}
+            </fieldset>
+            <div class="btn-group pull-right">
+                <button type="submit" class="btn btn-warning"><i class="icon-filter icon-white"></i></button>
+                <a href="{{ request.path }}" class="btn btn-danger"><i class="icon-remove icon-white"></i></a>
+            </div>
         </form>
     </div>
     <div class="span10">
         {% bootstrap_messages %}
         <form action="" method="post" id="id_action_posts" class="form-inline">
             {% csrf_token %}
-            <p>
-                {% include 'django_actions/actions_select.html' %}
-                <a class="btn btn-success pull-right" href="./create/?{{ request.GET.urlencode }}">Create</a>
-            </p>
+            <div class="row-fluid" style="padding-bottom: 20px;">
+                <div class="span6">
+                    {% include 'django_actions/actions_select.html' %}
+                </div>
+                <div class="span6">
+                    <div class="btn-group pull-right">
+                        <a class="btn btn-primary" href="./export/?{{ request.GET.urlencode }}"><i class="icon-arrow-down icon-white"></i></a>
+                        <a class="btn btn-success" href="./create/?{{ request.GET.urlencode }}"><i class="icon-plus icon-white"></i></a>
+                        <a class="btn btn-primary" href="./import/?{{ request.GET.urlencode }}"><i class="icon-arrow-up icon-white"></i></a>
+                    </div>
+                </div>
+            </div>
             {% if object_list %}
             {% include 'better_admin/table.html' %}
             {% else %}

@@ -5,6 +5,6 @@
         <option {% if attrs.class %}class="{{attrs.class}}"{% endif %} value="{{ forloop.counter }}"> {{ action }}</option>
     {% endfor %}
 </select>
-<button class="btn btn-primary" type="submit">{% trans 'Go' %}</button>
+<button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i></button>
 <input type="hidden" value="{{ all_items_count }}" name="all-items-count">
 <input type="hidden" value="0" name="select-across">
