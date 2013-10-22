@@ -5,12 +5,14 @@
 <div class="row-fluid">
     <div class="span2">
         <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
-            {% for field in filter.form %}
-            <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
-            {% endfor %}
+            <fieldset>
+                {% for field in filter.form %}
+                    <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
+                {% endfor %}
+            </fieldset>
             <div class="btn-group pull-right">
                 <button type="submit" class="btn btn-warning"><i class="icon-filter icon-white"></i></button>
-                <a href="{{ request.path }}" class="btn btn-primary"><i class="icon-remove icon-white"></i></a>
+                <a href="{{ request.path }}" class="btn btn-danger"><i class="icon-remove icon-white"></i></a>
             </div>
         </form>
     </div>

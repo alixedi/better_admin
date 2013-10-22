@@ -2,7 +2,7 @@
 
 {% auto_sort object_list %}
 {% autopaginate object_list 10 %}
-<table class="table">
+<table class="table table-striped">
     {% for object in object_list %}
     {% if forloop.first %}
     <thead>
@@ -21,7 +21,7 @@
         <tr>
             <td><input type="checkbox" name="action-select" value="{{ object.pk }}"></td>
             {% for field in view.get_model_fields %}
-            {% if field|get_field_type != 'AutoField'  %}
+            {% if field|get_field_type != 'AutoField' %}
             {% include 'better_admin/field.html' %}
             {% endif %}
             {% endfor %}

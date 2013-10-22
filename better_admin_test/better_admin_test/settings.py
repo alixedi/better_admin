@@ -1,7 +1,8 @@
 # Django settings for better_admin_test project.
 
-from os.path import abspath, dirname, join
+from os.path import abspath, dirname, basename, join
 PROJECT_ROOT = abspath(dirname(__file__))
+PROJECT_NAME = basename(PROJECT_ROOT)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
