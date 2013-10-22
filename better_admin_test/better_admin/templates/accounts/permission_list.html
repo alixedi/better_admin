@@ -1,0 +1,32 @@
+{% extends 'better_admin/base_better_admin.html' %}
+{% load bootstrap_toolkit widget_tweaks %}
+{% block page_header %}
+    <h1>Permissions</h1>
+{% endblock %}
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+                <form method="GET" action="{{ request.get_full_path }}">
+            <div class="row-fluid">
+                  <div class="span2"><label>Permission Name</label></div>
+                  <div class="span2">{{ filter.form.name|attr:"class:span12"}} </div>
+
+                  <div class="span2"><label>Code Name</label></div>
+                  <div class="span2">{{ filter.form.codename|attr:"class:span12" }} </div>
+
+                  <div class="span2"><label>Content Type</label></div>
+                  <div class="span2">{{ filter.form.content_type|attr:"class:span12" }} </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-small"><i class="icon-filter"></i> Apply Filter</button>
+                <button type="reset" class="btn btn-small"><i class="icon-refresh"></i> Reset Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+    <div class="span12 pull-right">
+        {% bootstrap_messages %}
+        {% include 'accounts/permission_table.html' %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% load pagination_tags sorting better_admin %}
+
+{% auto_sort object_list %}
+{% autopaginate object_list 25 %}
+<table class="table table-bordered table-condensed table-hover">
+
+            <thead>
+                <tr>
+                    <th>{% sort_link "User Name" "username" %}</th>
+                    <th>{% sort_link "First Name" "first_name" %}</th>
+                    <th>{% sort_link "Last Name" "last_name" %}</th>
+                    <th>{% sort_link "Email" "email" %}</th>
+                    <th>{% sort_link "KAM" "is_staff" %}</th>
+                    <th>{% sort_link "Active" "is_active" %}</th>
+                    <th>{% sort_link "Last Login" "last_login" %}</th>
+                    <th style="width:75px;"><label>Action</label></th>
+                </tr>
+            </thead>
+            <tbody>
+    {% for object in object_list %}
+        <tr>
+            <td>{{object.username}}</td>
+            <td>{{object.first_name}}</td>
+            <td>{{object.last_name}}</td>
+            <td>{{object.email}}</td>
+            {% for field in view.get_model_fields %}
+                {% if field.name == "is_staff" %}
+                    {% if field|get_field_type == 'BooleanField' %}
+                        {% include 'better_admin/field.html' %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% for field in view.get_model_fields %}
+                {% if field.name == "is_active" %}
+                    {% if field|get_field_type == 'BooleanField' %}
+                        {% include 'better_admin/field.html' %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            <td>{{object.last_login}}</td>
+            <td>{% include 'accounts/user_actions.html' %}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% paginate %}
+
