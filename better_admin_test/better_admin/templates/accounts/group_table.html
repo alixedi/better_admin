@@ -1,0 +1,27 @@
+{% load pagination_tags sorting better_admin %}
+
+{% auto_sort object_list %}
+{% autopaginate object_list 25 %}
+<table class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>{% sort_link "Name" "name" %}</th>
+                    <th>Permissions</th>
+                </tr>
+            </thead>
+    <tbody>
+    {% for object in object_list %}
+        <tr>
+            <td>{{object.name}}</td>
+            <td>
+                {% for item in object.permissions.all %}
+                    {{ item.name }}
+                    {% if not forloop.last %} <br /> {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% paginate %}
+

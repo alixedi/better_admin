@@ -1,6 +1,6 @@
 import hashlib
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission, Group
 from django.conf.urls import patterns, url
 from django.contrib.auth import views as auth_views
 
@@ -9,6 +9,11 @@ from better_admin.core import BetterAppAdmin, BetterModelAdmin
 
 class UserModelAdmin(BetterModelAdmin):
     model = User
+    list_template = 'accounts/user_list.html'
+    detail_template = 'accounts/user_detail.html'
+    create_template = 'accounts/user_create.html'
+    update_template = 'accounts/user_update.html'
+
 
     def pre_save(self, form, request):
         """
@@ -29,9 +34,24 @@ class UserModelAdmin(BetterModelAdmin):
         self.pre_save(form, request)
 
 
+class PermissionModelAdmin(BetterModelAdmin):
+    model = Permission
+    list_template = 'accounts/permission_list.html'
+
+
+class GroupModelAdmin(BetterModelAdmin):
+    model = Group
+    list_template = 'accounts/group_list.html'
+    detail_template = 'accounts/group_detail.html'
+    create_template = 'accounts/group_create.html'
+    update_template = 'accounts/group_update.html'
+    popup_template = 'accounts/group_popup.html'
+
 class AuthAppAdmin(BetterAppAdmin):
     app_name = 'auth'
-    model_admins = {'User': UserModelAdmin()}
+    model_admins = {'User': UserModelAdmin(),
+                    'Permission': PermissionModelAdmin(),
+                    'Group': GroupModelAdmin()}
 
     def get_urls(self):
         """

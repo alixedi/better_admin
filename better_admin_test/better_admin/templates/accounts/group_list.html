@@ -1,0 +1,37 @@
+{% extends 'better_admin/base_better_admin.html' %}
+{% load bootstrap_toolkit widget_tweaks %}
+
+{% block page_header %}
+    <h1>Groups</h1>
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12">
+        <form method="GET" action="{{ request.get_full_path }}">
+            <div class="row-fluid">
+                  <div class="span2"><label>Name</label></div>
+                  <div class="span4">{{ filter.form.name }} </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-small"><i class="icon-filter"></i> Apply Filter</button>
+                <button type="reset" class="btn btn-small"><i class="icon-refresh"></i> Reset Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<div class="row-fluid">
+    <div class="span12">
+        <div class="pull-right">
+            <a class="btn btn-primary btn-small" href="./create/?{{ request.GET.urlencode }}"><i class="icon-file"></i> Create</a>
+        </div>
+    </div>
+</div>
+<br />
+    <div class="span12 pull-right">
+        {% bootstrap_messages %}
+        {% include 'accounts/group_table.html' %}
+    </div>
+</div>
+{% endblock %}
