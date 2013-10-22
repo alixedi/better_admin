@@ -10,8 +10,8 @@
             {% endfor %}
         </dl>
         <div class="form-actions">
-            <a class="btn btn-primary" href="./update">Update</a>
-            <a class="btn btn-danger" href="./delete">Delete</a>
+            <a class="btn btn-primary" href="./update/?{{ request.GET.urlencode }}">Update</a>
+            <a class="btn btn-danger" href="./delete/?{{ request.GET.urlencode }}">Delete</a>
         </div>         
     </div>
 {% endblock %}

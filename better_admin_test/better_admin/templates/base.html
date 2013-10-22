@@ -29,6 +29,8 @@
         text-align: center;
       }
     </style>
+    {% block extra_style %}
+    {% endblock %}
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -46,14 +48,16 @@
   <body>
 		<div class="container">
       {% include "nav.html" %}
+      {% block header %}
       <div class="page-header">
           <h1>{{ view.get_model_name_plural|title }}</h1>
       </div>
+      {% endblock %}
 		  {% block content %}
 		  {% endblock %}
 		</div>
     <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/jquery.js"></script>
-    <script src="{{ STATIC_URL }}better_admin/js/jquery.expander.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/jquery.expander.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}better_admin/js/bootstrap.js"></script>
     <script src="{{ ADMIN_MEDIA_PREFIX }}js/admin/RelatedObjectLookups.js"></script>
     <script>
@@ -74,5 +78,8 @@
         });
       });
     </script>
+    {% block extra_script %}
+    <script></script>
+    {% endblock %}
   </body>
 </html>

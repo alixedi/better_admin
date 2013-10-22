@@ -13,7 +13,7 @@
             <th>{% sort_link field.verbose_name|title field.name %}</th>
             {% endifnotequal %}
             {% endfor %}
-            <th>View</th>
+            <th>Detail</th>
         </tr>
     </thead>
     <tbody>
@@ -26,7 +26,7 @@
             {% endif %}
             {% endfor %}
             <td style="padding-left:20px">
-                <a href="./{{ object.pk }}/"><i class="icon-play"></i></a>
+                <a href="./{{ object.pk }}/?{{ request.GET.urlencode }}"><i class="icon-play"></i></a>
             </td>
         </tr>
     {% endfor %}
