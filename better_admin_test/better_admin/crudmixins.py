@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import patterns, url
 
-from django_filters import filters
+from django_filters.filters import RangeFilter
 from django_filters.filterset import filterset_factory
 
 from better_admin.views import BetterListView, \
@@ -78,7 +78,7 @@ class BetterListAdminMixin(object):
                 if cls_name == 'CharFilter':
                     filterset.base_filters[field].lookup_type = 'icontains'
                 elif cls_name == 'NumberFilter':
-                    filterset.base_filters[field] = filters.RangeFilter()
+                    filterset.base_filters[field] = RangeFilter(name=field)
             return filterset
 
 
