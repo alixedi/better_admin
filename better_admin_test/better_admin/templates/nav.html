@@ -1,4 +1,4 @@
-{% load nav %}
+{% load nav better_admin %}
 {% get_nav "main" as main %}
 
 <div class="navbar navbar-fixed-top">
@@ -9,14 +9,49 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-     <a class="brand" href="../">{{ view.get_project_name|title }}</a>
+     <a class="brand" href="../">{% get_project_name %}</a>
       <div class="nav-collapse collapse">
+        {% if request.user.is_authenticated %}
         <ul class="nav">
           {% for nav in main %}
               {{ nav }}
           {% endfor %}
         </ul>
+        {% endif %}
         <ul class="nav pull-right">
+          <!--
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-exclamation-sign icon-white"></i><sup class="text-error"><strong>12</strong></sup>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Notification!</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-envelope icon-white"></i><sup class="text-error"><strong>12</strong></sup>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Message!</a></li>
+            </ul>
+          </li>
+          -->
+          {% if request.user.is_superuser %}
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-cog icon-white"></i>
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'auth_user_list' %}">Users</a></li>
+              <li><a href="{% url 'auth_group_list' %}">Group</a></li>
+            </ul>
+          </li>
+          {% endif %}
+          {% if request.user.is_authenticated %}
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
               <i class="icon-user icon-white"></i> {{ request.user }}
@@ -27,6 +62,9 @@
               <li><a href="{% url 'auth_password_change' %}">Change Password</a></li>
             </ul>
           </li>
+          {% else %}
+          <li><a href="{% url 'auth_login' %}"><i class="icon-user icon-white"></i> Login </a></li>
+          {% endif %}
         </ul>
       </div><!--/.nav-collapse -->
     </div>

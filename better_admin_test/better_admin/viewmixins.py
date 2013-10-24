@@ -72,6 +72,8 @@ class HookMixin(object):
         for key in self.request.GET:
             try:
                 form.fields[key].initial = self.request.GET[key]
+                # TODO: Doing this because I do not have the javascript 
+                # in my templates to post forms with disabled fields.
                 #form.fields[key].widget.attrs['disabled'] = 'disabled'
             except KeyError:
                 pass
@@ -95,35 +97,11 @@ class HookMixin(object):
         return super(HookMixin, self).form_valid(form)
 
 
-class PopupMixin(object):
+class PopupMixin(HookMixin):
     """
     To be used with PopupView. Provides pre-rendering and pre-saving hooks
-    for inserting useful logic a la HookMixin
+    via HookMixin and a special form_valid for the popups
     """
-    pre_render = None
-    pre_save = None
-
-    def init_form_from_get(self, form):
-        """
-        Init form from the parameters in GET querystring.
-        """
-        for key in self.request.GET:
-            try:
-                form.fields[key].initial = self.request.GET[key]
-                form.fields[key].widget.attrs['disabled'] = 'disabled'
-            except KeyError:
-                pass
-
-    def get_form(self, form_class):
-        """
-        Plug-in the pre_render hook.
-        """
-        form = form_class(**self.get_form_kwargs())
-        if not self.pre_render == None:
-            self.pre_render(form, self.request)
-        self.init_form_from_get(form)
-        return form
-
 
     def form_valid(self, form):
         """

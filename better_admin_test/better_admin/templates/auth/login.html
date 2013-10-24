@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "auth/base_auth.html" %}
 {% load bootstrap_toolkit %}
 
 {% block content %}
 
-<div class="container-narrow">
+<div class="container-narrower">
     <form class="form-horizontal" method="POST" action="{{ request.get_full_path }}" enctype="multipart/form-data">
     	{% csrf_token %}
         <fieldset>
@@ -11,11 +11,13 @@
             {{ form|as_bootstrap }}
         </fieldset>
         <div class="form-actions">
-            <input type="submit" class="btn btn-primary" value="Submit" />
-          	<input type="hidden" name="next" value="{{ next }}" />
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a class="btn btn-danger" href="{% url 'auth_password_reset' %}">Reset Password</a>
+          	</div>
+            <input type="hidden" name="next" value="{{ next }}" />
         </div>
     </form>
-	<p style="text-align: right">Forgot password? <a href="{% url 'auth_password_reset' %}">Reset it!</a></p>
 </div>
 
 {% endblock %}

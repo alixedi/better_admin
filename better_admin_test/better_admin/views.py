@@ -10,6 +10,9 @@ from braces.views import LoginRequiredMixin, PermissionRequiredMixin, \
 
 from django_actions.views import ActionViewMixin
 
+from django.http import HttpResponseRedirect
+
+from django.core.urlresolvers import reverse_lazy
 
 class BetterListView(LoginRequiredMixin,
                      PermissionRequiredMixin,
@@ -341,3 +344,10 @@ class BetterSuperuserDeleteView(LoginRequiredMixin,
     Superuser-only DeleteView
     """
     pass
+
+
+def home(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse_lazy('auth_user_detail', 
+                                    kwargs={'pk': request.user.id}))
+    return HttpResponseRedirect(reverse_lazy('auth_login'))

@@ -1,19 +1,22 @@
 import hashlib
 
-from django.contrib.auth.models import User, Permission, Group
+from django.contrib.auth.models import User
 from django.conf.urls import patterns, url
 from django.contrib.auth import views as auth_views
 
-from better_admin.core import BetterAppAdmin, BetterModelAdmin
+from better_admin.core import BetterAppAdmin, \
+                              BetterModelAdmin
+from better_admin.views import home
+from better_admin.mixins import SUPERUSER_ACCESS
 
 
 class UserModelAdmin(BetterModelAdmin):
-    model = User
-    list_template = 'accounts/user_list.html'
-    detail_template = 'accounts/user_detail.html'
-    create_template = 'accounts/user_create.html'
-    update_template = 'accounts/user_update.html'
-
+    """
+    Overriding UserModelAdmin in order to get around django's
+    password md5 hack. 
+    """
+    queryset = User.objects.all()
+    access = SUPERUSER_ACCESS
 
     def pre_save(self, form, request):
         """
@@ -34,24 +37,13 @@ class UserModelAdmin(BetterModelAdmin):
         self.pre_save(form, request)
 
 
-class PermissionModelAdmin(BetterModelAdmin):
-    model = Permission
-    list_template = 'accounts/permission_list.html'
-
-
-class GroupModelAdmin(BetterModelAdmin):
-    model = Group
-    list_template = 'accounts/group_list.html'
-    detail_template = 'accounts/group_detail.html'
-    create_template = 'accounts/group_create.html'
-    update_template = 'accounts/group_update.html'
-    popup_template = 'accounts/group_popup.html'
-
 class AuthAppAdmin(BetterAppAdmin):
+    """
+    AppAdmin for Auth. Obviously.
+    """
     app_name = 'auth'
-    model_admins = {'User': UserModelAdmin(),
-                    'Permission': PermissionModelAdmin(),
-                    'Group': GroupModelAdmin()}
+    model_admins = {'User': UserModelAdmin()}
+    exclude = ['Permission',]
 
     def get_urls(self):
         """
@@ -59,47 +51,51 @@ class AuthAppAdmin(BetterAppAdmin):
         """
 
         urls = super(AuthAppAdmin, self).get_urls()
-
+        
         urls += patterns('',
 
-            url(r'^accounts/login/$',
+            url(r'^$',
+                home,
+                name='home'),
+
+            url(r'^auth/login/$',
                 auth_views.login,
-                {'template_name': 'accounts/login.html'},
+                {'template_name': 'auth/login.html'},
                 name='auth_login'),
 
-            url(r'^accounts/logout/$',
+            url(r'^auth/logout/$',
                 auth_views.logout,
-                {'template_name': 'accounts/logout.html'},
+                {'template_name': 'auth/logout.html'},
                 name='auth_logout'),
 
-            url(r'^accounts/password/change/$',
+            url(r'^auth/password/change/$',
                 auth_views.password_change,
-                {'template_name': 'accounts/password_change_form.html'},
+                {'template_name': 'auth/password_change_form.html'},
                 name='auth_password_change'),
 
-            url(r'^accounts/password/change/done/$',
+            url(r'^auth/password/change/done/$',
                 auth_views.password_change_done,
-                {'template_name': 'accounts/password_change_done.html'},
+                {'template_name': 'auth/password_change_done.html'},
                 name='auth_password_change_done'),
 
-            url(r'^accounts/password/reset/$',
+            url(r'^auth/password/reset/$',
                 auth_views.password_reset,
-                {'template_name': 'accounts/password_reset_form.html'},
+                {'template_name': 'auth/password_reset_form.html'},
                  name='auth_password_reset'),
 
-            url(r'^accounts/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
+            url(r'^auth/password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
                 auth_views.password_reset_confirm,
-                {'template_name': 'accounts/password_reset_confirm.html'},
+                {'template_name': 'auth/password_reset_confirm.html'},
                 name='auth_password_reset_confirm'),
 
-            url(r'^accounts/password/reset/complete/$',
+            url(r'^auth/password/reset/complete/$',
                 auth_views.password_reset_complete,
-                {'template_name': 'accounts/password_reset_complete.html'},
+                {'template_name': 'auth/password_reset_complete.html'},
                 name='auth_password_reset_complete'),
 
-            url(r'^accounts/password/reset/done/$',
+            url(r'^auth/password/reset/done/$',
                 auth_views.password_reset_done,
-                {'template_name': 'accounts/password_change_done.html'},
+                {'template_name': 'auth/password_change_done.html'},
                 name='auth_password_reset_done'),
         )
 
@@ -109,4 +105,5 @@ class AuthAppAdmin(BetterAppAdmin):
 def enable_auth(urlpatterns, nav_groups):
     auth_app_admin = AuthAppAdmin()
     urlpatterns += auth_app_admin.get_urls()
-    nav_groups.register(auth_app_admin.get_nav())
+    # Disabling this because we are customizing the auth nav in template!
+    # nav_groups.register(auth_app_admin.get_nav())

@@ -21,7 +21,7 @@ from better_admin.core import BetterModelAdmin
 from better_admin_test_app.views import KAMBetterListView
 
 class BetterKAMModelAdmin(BetterModelAdmin):
-	model = KAM
+	queryset = KAM.objects.all()
 	list_view = KAMBetterListView
 
 	def get_request_queryset(self, request):

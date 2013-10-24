@@ -4,35 +4,14 @@ from django.conf.urls import patterns
 
 from django_nav import Nav, NavOption
 
-from better_admin.adminmixins import BetterModelAdminMixin
+from better_admin.mixins import BetterModelAdminMixin
 
 
 class BetterModelAdmin(BetterModelAdminMixin):
     """
-    BetterModelAdminMixin creates and takes care of CRUD for the
-    givem model.
+    BetterModelAdmin creates and takes care of CRUD for the
+    given model.
     """
-
-    def __init__(self):
-        """
-        Run the factories.
-        """
-        if self.list_view is None:
-            self.list_view = self.get_list_view()
-        if self.detail_view is None:
-            self.detail_view = self.get_detail_view()
-        if self.create_view is None:
-            self.create_view = self.get_create_view()
-        if self.update_view is None:
-            self.update_view = self.get_update_view()
-        if self.delete_view is None:
-            self.delete_view = self.get_delete_view()
-        if self.popup_view is None:
-            self.popup_view = self.get_popup_view()
-        if self.import_resource is None:
-            self.import_resource = self.get_import_resource()
-        if self.export_resource is None:
-            self.export_resource = self.get_export_resource()
 
     def get_nav(self):
         """
@@ -52,8 +31,7 @@ class BetterModelAdmin(BetterModelAdminMixin):
         TODO: Use super call to get all urls compiled. Will have to rename
         get_<view_type>_urls to get_urls in all the mixins.
         """
-        meta = self.get_model()._meta
-        urls = patterns('%s.views' % meta.app_label)
+        urls = patterns('%s.views' % self.get_app_label())
         urls += self.get_create_urls()
         urls += self.get_popup_urls()
         urls += self.get_export_urls()
@@ -85,7 +63,7 @@ class BetterAppAdmin(object):
     # model_admins = {}
 
     model_admins = None
-    exclude_model = None
+    exclude = None
 
     def __init__(self):
         """
@@ -94,14 +72,14 @@ class BetterAppAdmin(object):
         """
         if self.model_admins is None:
             self.model_admins = {}
-        if self.exclude_model is None:
-            self.exclude_model = []
+        if self.exclude is None:
+            self.exclude = []
         app_name = self.get_app_name()
         app = get_app(app_name)
         for model in get_models(app):
             model_name = model._meta.object_name
             if not model_name in self.model_admins:
-                if model_name in self.exclude_model:
+                if model_name in self.exclude:
                     continue
                 self.model_admins[model_name] = self.get_model_admin(model)
 
