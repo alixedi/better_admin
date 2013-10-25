@@ -1,3 +1,10 @@
+"""
+TODO: Eerything in this file is a dirty hack from django-import-export's 
+admin mixins that were originally intended to be used with django-admin.
+We have been able to turn them around but this is not tested and may break
+so use with care.
+"""
+
 import tempfile
 from datetime import datetime
 
@@ -56,15 +63,16 @@ class BetterImportAdminMixin(object):
         meta = self.get_model()._meta
         info = meta.app_label, meta.module_name
         base_url = '%s/%s' % info
-        view_name = '%s_%s_delete' % info
+        view_name1 = '%s_%s_process_import' % info
+        view_name2 = '%s_%s_import' % info
 
         return patterns('%s.views' % meta.app_label,
                         url(r'^%s/process_import/$' % base_url,
                             self.process_import,
-                            name=view_name),
+                            name=view_name1),
                         url(r'^%s/import/$' % base_url,
                             self.import_action,
-                            name=view_name))
+                            name=view_name2))
 
     def get_import_formats(self):
         """
@@ -189,7 +197,7 @@ class BetterExportAdminMixin(object):
         meta = self.get_model()._meta
         info = meta.app_label, meta.module_name
         base_url = '%s/%s' % info
-        view_name = '%s_%s_delete' % info
+        view_name = '%s_%s_export' % info
 
         return patterns('%s.views' % meta.app_label,
                         url(r'^%s/export/$' % base_url,

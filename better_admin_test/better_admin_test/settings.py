@@ -184,27 +184,11 @@ LOGGING = {
     }
 }
 
-# userena settings
-"""
-AUTHENTICATION_BACKENDS = (
-    'userena.backends.UserenaAuthenticationBackend',
-    'guardian.backends.ObjectPermissionBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-ANONYMOUS_USER_ID = -1
-AUTH_PROFILE_MODULE = 'accounts.MyProfile'
-USERENA_ACTIVATION_REQUIRED = False
-LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
-LOGIN_URL = '/accounts/signin/'
-LOGOUT_URL = '/accounts/signout/'
+from django.core.urlresolvers import reverse_lazy
+LOGIN_URL = reverse_lazy('auth_login')
+LOGOUT_URL = reverse_lazy('auth_logout')
+LOGIN_REDIRECT_URL = reverse_lazy('home')
 
-#easy_thumbnail settings
-THUMBNAIL_ALIASES = {
-    '': {
-        'avatar': {'size': (50, 50), 'crop': True},
-    },
-}
-"""
 # settings for django debug toolbar
 INTERNAL_IPS = ('127.0.0.1',)
 

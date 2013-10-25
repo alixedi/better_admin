@@ -14,7 +14,7 @@
         <table class="table table-striped">
             {% for field in view.get_model_fields %}
             <tr>
-                <td><strong>{{ field.verbose_name|title }}</strong></td><td>{% include "better_admin/field.html" %}</td>
+                <td><strong>{{ field.verbose_name|title }}</strong></td>{% include "better_admin/field.html" %}
             </tr>
             {% endfor %}
         </table>

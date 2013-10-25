@@ -18,7 +18,7 @@
 <td><img src="{{ MEDIA_URL }}{{ field_value }}" width=50 alt="" /></td>
 
 {% elif field_type == 'BooleanField' or field_type == 'NullBooleanField' %}
-<td style="padding-left:20px"><i {% if 'True' == 'True' %}class="icon-ok"{% elif field_value == 'False' %}class="icon-remove"{% else %}class="icon-question"{% endif %}></i>
+<td style="padding-left:20px"><i {% if field_value == True %}class="icon-ok"{% elif field_value == False %}class="icon-remove"{% else %}class="icon-question"{% endif %}></i>
 </td>
 
 {% elif field_type == 'SmallIntegerField' or field_type == 'IntegerField' or field_type == 'BigIntegerField' or field_type == 'PositiveIntegerField' or field_type == 'PositiveSmallIntegerField' %}
@@ -39,8 +39,6 @@
 <td>{{ field_value|date:'d/m/y' }}</td>
 {% elif field_type == 'TimeField' %}
 <td>{{ field_value|date:'Hi' }}</td>
-
-
 
 {% else %}
 <td>{{ field_value }}</td>
