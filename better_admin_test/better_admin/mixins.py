@@ -1,7 +1,11 @@
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
-from django_filters.filterset import filterset_factory
+
+from better_admin.filters import TimeRangeFilter, \
+                                 DateRangeFilter,\
+                                 DateTimeRangeFilter, \
+                                 filterset_factory
 
 from better_admin.bulkmixins import BetterImportAdminMixin, \
                                     BetterExportAdminMixin
@@ -197,7 +201,6 @@ class BetterListAdminMixin(object):
         if not self.filter_set is None:
             return self.filter_set
         else:
-            # TODO: filterset factory
             model = self.get_model()
             return filterset_factory(model)
 
