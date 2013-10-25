@@ -1,8 +1,10 @@
 from django.core.urlresolvers import reverse_lazy
 from django.conf.urls import patterns, url
 
-from django_filters.filters import RangeFilter
-from django_filters.filterset import filterset_factory
+from better_admin.filters import TimeRangeFilter, \
+                                 DateRangeFilter,\
+                                 DateTimeRangeFilter, \
+                                 filterset_factory
 
 from better_admin.views import BetterListView, \
                                BetterSuperuserListView, \
@@ -70,17 +72,8 @@ class BetterListAdminMixin(object):
         if not self.filter_set is None:
             return self.filter_set
         else:
-            # TODO: filterset factory
             model = self.get_model()
-            filterset = filterset_factory(model)
-            for field in filterset.base_filters.keys():
-                cls_name = filterset.base_filters[field].__class__.__name__
-                if cls_name == 'CharFilter':
-                    filterset.base_filters[field].lookup_type = 'icontains'
-                elif cls_name == 'NumberFilter':
-                    filterset.base_filters[field] = RangeFilter(name=field)
-            return filterset
-
+            return filterset_factory(model)
 
     def get_actions(self):
         """
