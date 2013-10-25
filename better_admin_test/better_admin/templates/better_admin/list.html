@@ -1,5 +1,5 @@
 {% extends 'better_admin/base_better_admin.html' %}
-{% load bootstrap_toolkit widget_tweaks %}
+{% load bootstrap_toolkit widget_tweaks better_admin %}
 
 {% block content %}
 <div class="row-fluid">
@@ -7,7 +7,17 @@
         <form class="form form-horizontal" method="GET" action="{{ request.get_full_path }}">
             <fieldset>
                 {% for field in filter.form %}
-                    <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
+                    {% with field_type=field|get_form_field_type %}
+                    {% if not field.name in extra.exclude %}
+                        {% if field_type == 'RangeField' %}
+                        <p>{% render_field field placeholder=field.label.title class+="span6" %}</p>
+                        {% elif field_type == 'CharField' %}
+                        <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
+                        {% else %}
+                        <p>{% render_field field placeholder=field.label.title class+="span12" %}</p>
+                        {% endif %}
+                    {% endif %}
+                    {% endwith %}
                 {% endfor %}
             </fieldset>
             <div class="btn-group pull-right">
@@ -26,9 +36,17 @@
                 </div>
                 <div class="span6">
                     <div class="btn-group pull-right">
-                        <a class="btn btn-primary" href="./export/?{{ request.GET.urlencode }}"><i class="icon-arrow-down icon-white"></i></a>
-                        <a class="btn btn-success" href="./create/?{{ request.GET.urlencode }}"><i class="icon-plus icon-white"></i></a>
-                        <a class="btn btn-primary" href="./import/?{{ request.GET.urlencode }}"><i class="icon-arrow-up icon-white"></i></a>
+                        {% if request.user.is_superuser %}
+                            <a class="btn btn-primary" href="./export/?{{ request.GET.urlencode }}"><i class="icon-arrow-down icon-white"></i></a>
+                        {% endif %}
+                        {% with view.get_app_name.lower|add:".add_"|add:view.get_model_name.lower as perm %}
+                            {% if perm in perms %}
+                                <a class="btn btn-success" href="./create/?{{ request.GET.urlencode }}"><i class="icon-plus icon-white"></i></a>
+                            {% endif %}
+                        {% endwith %}
+                        {% if request.user.is_superuser %}
+                            <a class="btn btn-primary" href="./import/?{{ request.GET.urlencode }}"><i class="icon-arrow-up icon-white"></i></a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

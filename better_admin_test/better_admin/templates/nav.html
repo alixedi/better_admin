@@ -65,6 +65,18 @@
           {% else %}
           <li><a href="{% url 'auth_login' %}"><i class="icon-user icon-white"></i> Login </a></li>
           {% endif %}
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <img src="{{ STATIC_URL }}better_admin/img/logo.svg" style="width: 16px;" />
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="http://www.bitswits.com">Home</a></li>
+              <li><a href="http://www.bitswits.com/about.html">About</a></li>
+              <li><a href="http://www.bitswits.com/products.html">Products</a></li>
+              <li><a href="http://www.bitswits.com/contact.html">Contact</a></li>
+            </ul>
+          </li>
         </ul>
       </div><!--/.nav-collapse -->
     </div>

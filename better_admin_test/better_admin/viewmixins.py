@@ -124,8 +124,10 @@ class BaseViewMixin(object):
     over-riding the get_queryset function to include the request_queryset
     hook.
     """
-
+    # points to a function that dynamically returns querysey using request
     request_queryset = None
+    # dictionary for holding miscellany
+    extra_context = None
 
     def get_base_queryset(self):
         """
@@ -137,6 +139,13 @@ class BaseViewMixin(object):
             return self.request_queryset(self.request)
         else:
             return super(BaseViewMixin, self).get_base_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseViewMixin, self).get_context_data(**kwargs)
+        if self.extra_context is None:
+            self.extra_context = {}
+        context['extra'] = self.extra_context
+        return context
 
 
 class TemplateUtilsMixin(object):

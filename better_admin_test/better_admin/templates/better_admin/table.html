@@ -3,16 +3,25 @@
 {% auto_sort object_list %}
 {% autopaginate object_list 10 %}
 <div class="table-collapse">
-    <table class="table table-striped">
+    <table class="table table-condensed table-bordered table-hover">
         {% for object in object_list %}
         {% if forloop.first %}
         <thead>
             <tr>
                 <th class="select"><input type="checkbox"></th>
                 {% for field in view.get_model_fields %}
-                {% ifnotequal field|get_field_type 'AutoField'  %}
-                <th>{% sort_link field.verbose_name|title field.name %}</th>
-                {% endifnotequal %}
+                    {% if not field.name in extra.exclude %}
+                        {% ifnotequal field|get_field_type 'AutoField'  %}
+                            <th>
+                                {% sort_link field.verbose_name|title field.name %}
+                                <sup>
+                                    {% if not field.help_text == '' %}
+                                    <a href="#" data-toggle="tooltip" title="{{ field.help_text }}">?</a>
+                                    {% endif %}
+                                </sup>
+                            </th>
+                        {% endifnotequal %}
+                    {% endif %}
                 {% endfor %}
                 <th>Detail</th>
             </tr>
@@ -22,9 +31,11 @@
             <tr>
                 <td><input type="checkbox" name="action-select" value="{{ object.pk }}"></td>
                 {% for field in view.get_model_fields %}
-                {% if field|get_field_type != 'AutoField' %}
-                {% include 'better_admin/field.html' %}
-                {% endif %}
+                    {% if not field.name in extra.exclude %}
+                        {% if field|get_field_type != 'AutoField' %}
+                            <td>{% include 'better_admin/field.html' %}</td>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
                 <td style="padding-left:20px">
                     <a href="./{{ object.pk }}/?{{ request.GET.urlencode }}"><i class="icon-play"></i></a>

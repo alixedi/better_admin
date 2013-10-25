@@ -6,17 +6,35 @@
         <legend>
             {{ object }} Details
             <div class="btn-group pull-right">
-                <a class="btn btn-warning" href="./update/?{{ request.GET.urlencode }}"><i class="icon-edit icon-white"></i></a>
-                <a class="btn btn-danger" href="./delete/?{{ request.GET.urlencode }}"><i class="icon-trash icon-white"></i></a>
+                {% with view.get_app_name.lower|add:".change_"|add:view.get_model_name.lower as perm %}
+                    {% if perm in perms %}
+                        <a class="btn btn-warning" href="./update/?{{ request.GET.urlencode }}"><i class="icon-edit icon-white"></i></a>
+                    {% endif %}
+                {% endwith %}
+                {% with view.get_app_name.lower|add:".delete_"|add:view.get_model_name.lower as perm %}
+                    {% if perm in perms %}
+                        <a class="btn btn-danger" href="./delete/?{{ request.GET.urlencode }}"><i class="icon-trash icon-white"></i></a>
+                    {% endif %}
+                {% endwith %}
                 <a class="btn btn-success" href="../?{{ request.GET.urlencode }}"><i class="icon-list icon-white"></i></a>
             </div>
         </legend>
-        <table class="table table-striped">
-            {% for field in view.get_model_fields %}
-            <tr>
-                <td><strong>{{ field.verbose_name|title }}</strong></td>{% include "better_admin/field.html" %}
-            </tr>
-            {% endfor %}
+        <table class="table table-condensed table-bordered table-hover">
+        {% for field in view.get_model_fields %}
+            {% if not field.name in extra.exclude %}
+                <tr>
+                    <td><strong>{{ field.verbose_name|title }}</strong></td>
+                    <td>{% include "better_admin/field.html" %}</td>
+                    <td>
+                        {% if field.help_text == '' %}
+                        <small> - </small>
+                        {% else %}
+                        <small>{{ field.help_text }}</small>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
         </table>
     </div>
 {% endblock %}

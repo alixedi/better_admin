@@ -19,7 +19,7 @@ class ListViewTest(TestCase):
                                               ip_address='192.1.1.1',
                                               volume=100, revenue=10)
 
-    def test_create_view_get(self):
+    def test_list_view_get(self):
         # hit the url
         list_url = reverse('better_admin_test_app_company_list')
         response = self.c.get(list_url)
