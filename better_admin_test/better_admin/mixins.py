@@ -57,7 +57,7 @@ class BetterModelAdminMixin(object):
         """
         Returns model name in a variety of formats
         """
-        model_name = self.get_model()._meta.object_name
+        model_name = self.get_model()._meta.verbose_name
         return model_name.lower() if lower else model_name
 
     def get_app_label(self, lower=True):
