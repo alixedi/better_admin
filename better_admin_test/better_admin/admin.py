@@ -17,25 +17,29 @@ class UserModelAdmin(BetterModelAdmin):
     """
     queryset = User.objects.all()
     access = SUPERUSER_ACCESS
+    list_exclude = ('password',)
+    detail_exclude = ('password',)
 
-    def pre_save(self, form, request):
+    def create_pre_render(self, form, request):
         """
-        Generic pre_save.
+        Strip last login and date joined
         """
-        form.instance.password = hashlib.md5(form.instance.password).hexdigest()
+        del form.fields['last_login']
+        del form.fields['date_joined']
+
+    def update_pre_render(self, form, request):
+        """
+        Strip password and the like
+        """
+        del form.fields['password']
+        del form.fields['last_login']
+        del form.fields['date_joined']
 
     def create_pre_save(self, form, request):
         """
-        Create pre_save to be hooked into CreateView
+        Hash password
         """
-        self.pre_save(form, request)
-
-    def update_pre_save(self, form, request):
-        """
-        Update pre_save to be hooked into UpdateView
-        """
-        self.pre_save(form, request)
-
+        form.instance.password = hashlib.md5(form.instance.password).hexdigest()
 
 class AuthAppAdmin(BetterAppAdmin):
     """

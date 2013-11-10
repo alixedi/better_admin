@@ -13,6 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 
 from import_export.resources import modelresource_factory
 from import_export.forms import ExportForm, ConfirmImportForm, ImportForm
@@ -80,6 +81,7 @@ class BetterImportAdminMixin(object):
         """
         return [f for f in self.formats if f().can_import()]
 
+    @user_passes_test(lambda u: u.is_superuser)
     def process_import(self, request, *args, **kwargs):
         '''
         Perform the actuall import action (after the user has confirmed he
@@ -112,6 +114,7 @@ class BetterImportAdminMixin(object):
                           (opts.app_label.lower(), opts.object_name.lower()))
             return HttpResponseRedirect(url)
 
+    @user_passes_test(lambda u: u.is_superuser)
     def import_action(self, request, *args, **kwargs):
         '''
         Perform a dry_run of the import to make sure the import will not
@@ -220,6 +223,7 @@ class BetterExportAdminMixin(object):
                                  file_format.get_extension())
         return filename
 
+    @user_passes_test(lambda u: u.is_superuser)
     def export_action(self, request, *args, **kwargs):
         """
         The function based view that does the export. Copied from 

@@ -3,6 +3,7 @@ from django.db.models import get_app, get_models
 from django.conf.urls import patterns
 
 from django_nav import Nav, NavOption
+from django_nav.conditionals import user_has_perm
 
 from better_admin.mixins import BetterModelAdminMixin
 
@@ -17,13 +18,13 @@ class BetterModelAdmin(BetterModelAdminMixin):
         """
         Returns subclass of NavOption that points to the ListView of the model.
         """
-        meta = self.get_model()._meta
-        info = meta.app_label.lower(), meta.object_name.lower()
-        view_name = '%s_%s_list' % info
-        return type('%sNavOption' % meta.object_name,
+        return type('%sNavOption' % self.get_model_name(),
                     (NavOption,),
-                    dict(name=meta.verbose_name_plural.title(),
-                         view=view_name))
+                    dict(name=self.get_model_name().title(),
+                         view=self.get_view_name('list'),
+                         conditional = {'function': user_has_perm, 
+                                        'args': [],
+                                        'kwargs': {'perm': self.get_perm('list')}}))
 
     def get_urls(self):
         """

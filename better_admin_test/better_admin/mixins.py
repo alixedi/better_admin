@@ -2,10 +2,8 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 
-from better_admin.filters import TimeRangeFilter, \
-                                 DateRangeFilter,\
-                                 DateTimeRangeFilter, \
-                                 filterset_factory
+from django_filters.filterset import filterset_factory
+from django_filters.filters import RangeFilter, DateRangeFilter
 
 from better_admin.bulkmixins import BetterImportAdminMixin, \
                                     BetterExportAdminMixin
@@ -191,6 +189,7 @@ class BetterListAdminMixin(object):
     list_access = GENERAL_ACCESS
     list_perm = None
     list_template = None
+    list_exclude = None
     filter_set = None
     actions = None
 
@@ -202,7 +201,17 @@ class BetterListAdminMixin(object):
             return self.filter_set
         else:
             model = self.get_model()
-            return filterset_factory(model)
+            filterset = filterset_factory(model)
+            for field in filterset.base_filters.keys():
+                cls_name = filterset.base_filters[field].__class__.__name__
+                print field, cls_name
+                if cls_name == 'CharFilter':
+                    filterset.base_filters[field].lookup_type = 'icontains'
+                elif cls_name == 'NumberFilter':
+                    filterset.base_filters[field] = RangeFilter(name=field)
+                elif cls_name == 'DateFilter' or cls_name == 'DateTimeFilter':
+                    filterset.base_filters[field] = DateRangeFilter(name=field)
+            return filterset
 
     def get_actions(self):
         """
@@ -242,7 +251,8 @@ class BetterListAdminMixin(object):
                              permission_required=self.get_perm('list'),
                              template_name=self.get_template('list'),
                              filter_set=self.get_filter_set(),
-                             actions=self.get_actions()))
+                             actions=self.get_actions(),
+                             extra_context={'exclude': self.list_exclude}))
 
     def get_list_urls(self):
         """
@@ -264,6 +274,7 @@ class BetterDetailAdminMixin(object):
     detail_perm = None
     detail_access = GENERAL_ACCESS
     detail_template = None
+    detail_exclude = None
 
     def get_detail_class(self):
         """
@@ -291,7 +302,8 @@ class BetterDetailAdminMixin(object):
                              queryset=self.get_queryset(),
                              request_queryset=self.get_request_queryset,
                              permission_required=self.get_perm('detail'),
-                             template_name=self.get_template('detail')))
+                             template_name=self.get_template('detail'),
+                             extra_context={'exclude': self.detail_exclude}))
 
     def get_detail_urls(self):
         """
