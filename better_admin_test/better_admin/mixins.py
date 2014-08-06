@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
+
 from django_filters.filterset import filterset_factory
 from django_filters.filters import RangeFilter, DateRangeFilter
 
@@ -56,7 +57,7 @@ class BetterModelAdminMixin(object):
         """
         Returns model name in a variety of formats
         """
-        model_name = self.get_model()._meta.object_name
+        model_name = self.get_model()._meta.verbose_name
         return model_name.lower() if lower else model_name
 
     def get_app_label(self, lower=True):
@@ -199,7 +200,6 @@ class BetterListAdminMixin(object):
         if not self.filter_set is None:
             return self.filter_set
         else:
-            # TODO: filterset factory
             model = self.get_model()
             filterset = filterset_factory(model)
             for field in filterset.base_filters.keys():
