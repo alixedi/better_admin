@@ -1,5 +1,5 @@
 """
-TODO: Eerything in this file is a dirty hack from django-import-export's 
+TODO: Eerything in this file is a dirty hack from django-import-export's
 admin mixins that were originally intended to be used with django-admin.
 We have been able to turn them around but this is not tested and may break
 so use with care.
@@ -18,12 +18,13 @@ from django.contrib.auth.decorators import user_passes_test
 from import_export.resources import modelresource_factory
 from import_export.forms import ExportForm, ConfirmImportForm, ImportForm
 from import_export.formats import base_formats
+from better_admin.import_export_extras import CustomXLS
 
 
 #: import / export formats
 DEFAULT_FORMATS = (
     base_formats.CSV,
-    base_formats.XLS,
+    CustomXLS,
     base_formats.TSV,
     base_formats.ODS,
     base_formats.JSON,
@@ -34,7 +35,7 @@ DEFAULT_FORMATS = (
 
 class BetterImportAdminMixin(object):
     """
-    Create and takes care of ImportView for importing data using 
+    Create and takes care of ImportView for importing data using
     django-import-export.
     """
 
@@ -171,7 +172,7 @@ class BetterImportAdminMixin(object):
 
 class BetterExportAdminMixin(object):
     """
-    Create and takes care of ExportView for exporting data using 
+    Create and takes care of ExportView for exporting data using
     django-import-export.
     """
     #: resource class
@@ -226,8 +227,8 @@ class BetterExportAdminMixin(object):
     @user_passes_test(lambda u: u.is_superuser)
     def export_action(self, request, *args, **kwargs):
         """
-        The function based view that does the export. Copied from 
-        import_export/resouces.py - the original could not work 
+        The function based view that does the export. Copied from
+        import_export/resouces.py - the original could not work
         because of references to admin.
         """
         formats = self.get_export_formats()
