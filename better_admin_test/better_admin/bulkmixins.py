@@ -241,6 +241,10 @@ class BetterExportAdminMixin(object):
             resource_class = self.get_export_resource()
             queryset = self.get_request_queryset(request)
             data = resource_class().export(queryset)
+            #Export filtered queryset
+            filter_set = self.get_filter_set()
+            filtered_queryset = filter_set(request.GET, queryset=self.queryset)
+            data = resource.export(filtered_queryset.qs)
             response = HttpResponse(
                 file_format.export_data(data),
                 mimetype='application/octet-stream',

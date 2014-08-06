@@ -2,9 +2,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ImproperlyConfigured
 from django.conf.urls import patterns, url
 
-from django_filters.filterset import filterset_factory
-from django_filters.filters import RangeFilter, DateRangeFilter
-
+from better_admin.filterset import filterset_factory
 from better_admin.bulkmixins import BetterImportAdminMixin, \
                                     BetterExportAdminMixin
 
@@ -15,19 +13,19 @@ from better_admin.views import BetterListView, \
 from better_admin.views import BetterDetailView, \
                                BetterStaffuserDetailView, \
                                BetterSuperuserDetailView
-                               
+
 from better_admin.views import BetterCreateView, \
                                BetterStaffuserCreateView, \
                                BetterSuperuserCreateView
-                               
+
 from better_admin.views import BetterUpdateView, \
                                BetterStaffuserUpdateView, \
                                BetterSuperuserUpdateView
-                               
+
 from better_admin.views import BetterDeleteView, \
                                BetterStaffuserDeleteView, \
                                BetterSuperuserDeleteView
-                               
+
 from better_admin.views import BetterPopupView, \
                                BetterStaffuserPopupView, \
                                BetterSuperuserPopupView
@@ -81,15 +79,15 @@ class BetterModelAdminMixin(object):
         """
         This method is passed to the respective View where it is plugged into
         the get_queryset method. You can over-ride this to put in logic that
-        generates the queryset dynamically based on request. For instance, 
+        generates the queryset dynamically based on request. For instance,
         only showing contacts that are friends with request.user
         """
         return self.get_queryset()
 
     def get_perm(self, view_type):
         """
-        This method returns the permission string in standard format given a 
-        view_type. For instance, given 'list' as view_type, this method 
+        This method returns the permission string in standard format given a
+        view_type. For instance, given 'list' as view_type, this method
         returns '<app_name>.view_<model_name>' as the permission string.
         """
         # if user has overriden the perm for this specific view return that
@@ -101,8 +99,8 @@ class BetterModelAdminMixin(object):
                      'create': 'add', 'popup': 'add',
                      'update': 'change', 'delete': 'delete',
         }
-        return '%s.%s_%s' % (self.get_app_label(), 
-                             view_perm[view_type], 
+        return '%s.%s_%s' % (self.get_app_label(),
+                             view_perm[view_type],
                              self.get_model_name())
 
     def get_template(self, view_type):
@@ -119,9 +117,9 @@ class BetterModelAdminMixin(object):
     def get_view_name(self, view_type):
         """
         This method returns the standard view_name for use in URL generation
-        as well as in reverse and reverse_lazy etc given a view_type. For 
-        instance, given 'list' as view_type, this method would return 
-        '<app_label>_<model_name>_list'. 
+        as well as in reverse and reverse_lazy etc given a view_type. For
+        instance, given 'list' as view_type, this method would return
+        '<app_label>_<model_name>_list'.
         """
         return '%s_%s_%s' % (self.get_app_label(),
                              self.get_model_name(),
@@ -201,17 +199,7 @@ class BetterListAdminMixin(object):
             return self.filter_set
         else:
             model = self.get_model()
-            filterset = filterset_factory(model)
-            for field in filterset.base_filters.keys():
-                cls_name = filterset.base_filters[field].__class__.__name__
-                print field, cls_name
-                if cls_name == 'CharFilter':
-                    filterset.base_filters[field].lookup_type = 'icontains'
-                elif cls_name == 'NumberFilter':
-                    filterset.base_filters[field] = RangeFilter(name=field)
-                elif cls_name == 'DateFilter' or cls_name == 'DateTimeFilter':
-                    filterset.base_filters[field] = DateRangeFilter(name=field)
-            return filterset
+            return filterset_factory(model)
 
     def get_actions(self):
         """
@@ -238,7 +226,7 @@ class BetterListAdminMixin(object):
 
     def get_list_view(self):
         """
-        Returns a list view 
+        Returns a list view
         """
         if not self.list_view is None:
             return self.list_view
@@ -291,7 +279,7 @@ class BetterDetailAdminMixin(object):
 
     def get_detail_view(self):
         """
-        Returns a detail view 
+        Returns a detail view
         """
         if not self.detail_view is None:
             return self.detail_view
@@ -360,7 +348,7 @@ class BetterCreateAdminMixin(object):
 
     def get_create_view(self):
         """
-        Returns a create view 
+        Returns a create view
         """
         if not self.create_view is None:
             return self.create_view
@@ -429,7 +417,7 @@ class BetterPopupAdminMixin(object):
 
     def get_popup_view(self):
         """
-        Returns a popup view 
+        Returns a popup view
         """
         if not self.popup_view is None:
             return self.popup_view
@@ -498,7 +486,7 @@ class BetterUpdateAdminMixin(object):
 
     def get_update_view(self):
         """
-        Returns a update view 
+        Returns a update view
         """
         if not self.update_view is None:
             return self.update_view
@@ -571,7 +559,7 @@ class BetterDeleteAdminMixin(object):
 
     def get_delete_view(self):
         """
-        Returns a delete view 
+        Returns a delete view
         """
         if not self.delete_view is None:
             return self.delete_view
